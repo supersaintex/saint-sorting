@@ -3,7 +3,7 @@ use tera::{Tera, Context};
 
 async fn index(tmpl: web::Data<Tera>) -> Result<HttpResponse, Error>  {
 
-        let context = Context::new();
+    let context = Context::new();
     let view = tmpl.render("index.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
 
