@@ -19,7 +19,6 @@ async fn top(
     -> Result<HttpResponse, Error> {
 
     let context = Context::new();
-    //tmpl : A simple cli tool that renders Tera templates using variables defined in JSON files.
     let view = tmpl.render("top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
