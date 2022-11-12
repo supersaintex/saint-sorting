@@ -7,4 +7,9 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4"
+chrono = { version = "0.4.19", features = ["serde"] }
 tera= "1"
+reqwest = { version = "0.11.10", features = ["json"] }
+fireauth = "0.1.5"
+serde = { version = "1.0.136", features = ["derive"] }
+thiserror = "1.0.30"
