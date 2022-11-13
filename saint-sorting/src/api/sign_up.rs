@@ -1,16 +1,17 @@
-// use crate::{error::Error};
+use actix_web::{HttpResponse, Error, error};
+use std::io;
 use serde::{Serialize, Deserialize};
-use super::FailResponse;
+use tera::{Tera, Context};
+//use super::FailResponse;
 
-pub async fn sign_up_email(&self, email: &str, password: &str, return_secure_token: bool) -> Result<Response, Error> {
+pub async fn sign_up_email(email: &str, password: &str, return_secure_token: bool) -> Result<(), io::Error> {
 
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
-        self.api_key,
+        "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
     );
 
-    let client = reqwest::Client::new();
-    
+    /*let client = reqwest::Client::new();
     let resp = client.post(&url)
         .header("Content-Type", "application/json")
         .json(&SignUpPayload {
@@ -19,14 +20,17 @@ pub async fn sign_up_email(&self, email: &str, password: &str, return_secure_tok
             return_secure_token
         })
         .send()
-        .await?;
+        .await?;*/
 
-    if resp.status() != 200 {
+    /*if resp.status() != 200 {
         let error = resp.json::<FailResponse>().await?.error;
         return Err(Error::SignUp(error.message));
     }
     let body = resp.json::<Response>().await?;
-    Ok(body)
+    Ok(body)*/
+
+    Ok(())
+
 }
 
 #[derive(Debug, Serialize)]
