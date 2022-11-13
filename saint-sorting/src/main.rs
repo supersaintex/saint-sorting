@@ -1,12 +1,9 @@
-use std::{arch::x86_64::_MM_ROUND_TOWARD_ZERO, sync::PoisonError};
-
 use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error};
 use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
 // use crate::{error::Error};
 
-// mod sign_up;
-// mod sign_in;
+mod api;
 
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
@@ -21,7 +18,7 @@ async fn top(
     let context = Context::new();
     let view = tmpl.render("top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
-    
+
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 
 }
@@ -39,8 +36,14 @@ async fn top_login(
     // println!("{}", new_email);
     // println!("{}", new_passwd);
     // println!("{}", "hello");
+    //
+    //api::sign_up::sign_up_email(&new_email, &new_passwd, false).await.unwrap_or_else(|err| eprintln!("sign_up error : {}", err));
+    match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
+        Ok(_) => println!("sign up successed"),
+        Err(err) => println!("Error : {}", err),
+    }
 
-    //tmpl : A simple cli tool that renders Tera templates using variables defined in JSON files.
+
     let view = tmpl.render("top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
