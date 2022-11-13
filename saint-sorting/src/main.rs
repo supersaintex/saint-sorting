@@ -4,6 +4,7 @@ use serde::{Serialize, Deserialize};
 // use crate::{error::Error};
 
 mod api;
+mod auth_error;
 
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
