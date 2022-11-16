@@ -1,7 +1,9 @@
-use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error};
+use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error,
+                cookie::Key, middleware, HttpMessage as _};
 use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
-// use crate::{error::Error};
+use actix_identity::{Identity, IdentityMiddleware};
+use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 
 mod api;
 mod auth_error;
@@ -24,7 +26,7 @@ async fn top(
 
 }
 
-async fn top_login(
+async fn top_signup(
     params: web::Form<FormParams>,
     tmpl: web::Data<Tera>,)
     -> Result<HttpResponse, Error> {
@@ -38,9 +40,8 @@ async fn top_login(
     // println!("{}", new_passwd);
     // println!("{}", "hello");
     //
-    //api::sign_up::sign_up_email(&new_email, &new_passwd, false).await.unwrap_or_else(|err| eprintln!("sign_up error : {}", err));
     match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
-        Ok(_) => println!("sign up successed"),
+        Ok(response) => println!("signup successed"),
         Err(err) => println!("Error : {}", err),
     }
 
@@ -51,6 +52,55 @@ async fn top_login(
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 
 }
+
+async fn top_signin(
+    params: web::Form<FormParams>,
+    tmpl: web::Data<Tera>,)
+    -> Result<HttpResponse, Error> {
+
+    let context = Context::new();
+
+    let new_email  =  String::from(&params.email);
+    let new_passwd = String::from(&params.passwd);
+
+    match api::sign_in::sign_in_email(&new_email, &new_passwd, false).await {
+        Ok(response) => println!("sighin successed"),
+        Err(err) => println!("Error : {}", err),
+    }
+
+
+    let view = tmpl.render("top.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+    
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+
+}
+
+// /// simple index handler with session
+// async fn make_session(session: Session, req: HttpRequest) -> Result<&'static str> {
+//     log::info!("{:?}", req);
+
+//     // RequestSession trait is used for session access
+//     let mut counter = 1;
+//     if let Some(count) = session.get::<i32>("counter")? {
+//         log::info!("SESSION value: {}", count);
+//         counter = count + 1;
+//         session.insert("counter", counter)?;
+//     } else {
+//         session.insert("counter", counter)?;
+//     }
+
+//     Ok("welcome!")
+// }
+
+// async fn login_v2(req: HttpRequest) -> HttpResponse {
+//     Identity::login(&req.extensions(), "user1".to_owned()).unwrap();
+
+//     HttpResponse::Found()
+//         .insert_header(("location", "/"))
+//         .finish()
+// }
+
 
 
 async fn home() -> impl Responder {
@@ -66,12 +116,13 @@ async fn book() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 
+    std::env::set_var("RUST_LOG", "actix_web=info");
+    env_logger::init();
 
-    // INPUT OUR API-KEY FROM 
-    // let api_key: String = String::from("s6FqaFcRFd...njhB8cCjN7");
-
-    // let auth = fireauth::FireAuth::new("AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k");
-
+    // Generate a random secret key. Note that it is important to use a unique
+    // secret key for every project. Anyone with access to the key can generate
+    // authentication cookies for any user!
+    let secret_key = Key::generate();
 
     HttpServer::new(|| {
 
@@ -93,7 +144,8 @@ async fn main() -> std::io::Result<()> {
                 .route("/home", web::get().to(home))
                 .route("/clothing", web::get().to(clothing))
                 .route("/book", web::get().to(book))
-                .route("/top/login", web::post().to(top_login))
+                .route("/top/signup", web::post().to(top_signup))
+                .route("/top/signin", web::post().to(top_signin))
         )
     })
     .bind(("127.0.0.1", 8080))?
