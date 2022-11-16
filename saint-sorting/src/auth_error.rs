@@ -8,14 +8,14 @@ pub enum Error {
     #[error("{0}")]
     SignUp(String),
 
-   /* #[error("{0}")]
+    #[error("{0}")]
     SignIn(String),
 
-    #[error("{0}")]
-    User(String),
+    // #[error("{0}")]
+    // User(String),
 
-    #[error("{0}")]
-    Token(String),*/
+    // #[error("{0}")]
+    // Token(String),
 }
 
 impl std::convert::From<awc::error::SendRequestError> for Error {
