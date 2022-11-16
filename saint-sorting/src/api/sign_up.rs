@@ -1,11 +1,13 @@
 use awc::{Client};
+// use fireauth::api::SignInResponse;
 use crate::{auth_error::Error};
 use serde::{Serialize, Deserialize};
 use serde_json;
 use super::FailResponse;
 
 
-pub async fn sign_up_email(email: &str, password: &str, return_secure_token: bool) -> Result<(), Error> {
+pub async fn sign_up_email(email: &str, password: &str, return_secure_token: bool) 
+    -> Result<Response, Error> {
 
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
@@ -31,7 +33,10 @@ pub async fn sign_up_email(email: &str, password: &str, return_secure_token: boo
         return Err(Error::SignUp(error.message));
     }
 
-    Ok(())
+    //返すbodyの作成
+    let body = resp.json::<Response>().await?;
+
+    Ok(body)
 
 
 
