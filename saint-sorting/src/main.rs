@@ -4,9 +4,70 @@ use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
 use actix_identity::{Identity, IdentityMiddleware};
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use firestore_db_and_auth::{documents, documents::List, Credentials, ServiceSession, errors::Result};
 
-mod api;
-mod auth_error;
+
+// --------------------
+// firestore test
+// --------------------
+
+#[derive(Serialize, Deserialize)]
+ struct DemoDTO {
+    a_string: String,
+    an_int: u32,
+    another_int: u32,
+ }
+ #[derive(Serialize, Deserialize)]
+ struct DemoPartialDTO {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    a_string: Option<String>,
+    an_int: u32,
+ }
+
+async fn write(session: &ServiceSession) -> Result<()> {
+    let obj = DemoDTO { a_string: "abcd".to_owned(), an_int: 14, another_int: 10 };
+
+    // Create credentials object. You may as well do that programmatically.
+    let cred = Credentials::from_file("firebase-service-account.json")
+        .expect("Read credentials file")
+        .download_jwkset()
+        .expect("Failed to download public keys");
+
+    // To use any of the Firestore methods, you need a session first. You either want
+    // an impersonated session bound to a Firebase Auth user or a service account session.
+    let session = ServiceSession::new(cred)
+        .expect("Create a service account session");
+
+    let result = documents::write(session, "/ss", Some("service_test"), &obj, documents::WriteOptions::default())?;
+    
+    println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
+    Ok(())
+}
+
+
+// fn write_partial(session: &ServiceSession) -> Result<()> {
+//     let obj = DemoPartialDTO { a_string: None, an_int: 16 };
+//     let result = documents::write(session, "tests", Some("service_test"), &obj, documents::WriteOptions{merge:true})?;
+//     println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
+//     Ok(())
+// }
+
+// async fn user(
+//     tmpl: web::Data<Tera>,)
+//     -> actix_web::Result<HttpResponse, Error> {
+    
+    
+//     // let context = Context::new();
+//     // let view = tmpl.render("user.html", &context)
+//     //     .map_err(|e| error::ErrorInternalServerError(e))?;
+
+//     // Ok(HttpResponse::Ok().content_type("text/html").body(view))
+// }
+
+
+// --------------------
+// html
+// --------------------
 
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
@@ -16,7 +77,7 @@ pub struct FormParams {
 
 async fn top(
     tmpl: web::Data<Tera>,)
-    -> Result<HttpResponse, Error> {
+    -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
     let view = tmpl.render("top.html", &context)
@@ -29,7 +90,7 @@ async fn top(
 async fn top_signup(
     params: web::Form<FormParams>,
     tmpl: web::Data<Tera>,)
-    -> Result<HttpResponse, Error> {
+    -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
 
@@ -56,7 +117,7 @@ async fn top_signup(
 async fn top_signin(
     params: web::Form<FormParams>,
     tmpl: web::Data<Tera>,)
-    -> Result<HttpResponse, Error> {
+    -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
 
@@ -73,35 +134,7 @@ async fn top_signin(
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
-
 }
-
-// /// simple index handler with session
-// async fn make_session(session: Session, req: HttpRequest) -> Result<&'static str> {
-//     log::info!("{:?}", req);
-
-//     // RequestSession trait is used for session access
-//     let mut counter = 1;
-//     if let Some(count) = session.get::<i32>("counter")? {
-//         log::info!("SESSION value: {}", count);
-//         counter = count + 1;
-//         session.insert("counter", counter)?;
-//     } else {
-//         session.insert("counter", counter)?;
-//     }
-
-//     Ok("welcome!")
-// }
-
-// async fn login_v2(req: HttpRequest) -> HttpResponse {
-//     Identity::login(&req.extensions(), "user1".to_owned()).unwrap();
-
-//     HttpResponse::Found()
-//         .insert_header(("location", "/"))
-//         .finish()
-// }
-
-
 
 async fn home() -> impl Responder {
     "hello home!"
@@ -146,6 +179,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/book", web::get().to(book))
                 .route("/top/signup", web::post().to(top_signup))
                 .route("/top/signin", web::post().to(top_signin))
+                .route("/write_test", web::get().to(write))
         )
     })
     .bind(("127.0.0.1", 8080))?
