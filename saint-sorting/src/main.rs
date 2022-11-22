@@ -6,6 +6,9 @@ use actix_identity::{Identity, IdentityMiddleware};
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 use firestore_db_and_auth::{documents, documents::List, Credentials, ServiceSession, errors::Result};
 
+mod api;
+mod auth_error;
+
 
 // --------------------
 // firestore test
@@ -24,22 +27,12 @@ use firestore_db_and_auth::{documents, documents::List, Credentials, ServiceSess
     an_int: u32,
  }
 
-async fn write(session: &ServiceSession) -> Result<()> {
+// async fn write(session: &ServiceSession) -> Result<()> {
+fn write(session: &ServiceSession) -> Result<()> {
     let obj = DemoDTO { a_string: "abcd".to_owned(), an_int: 14, another_int: 10 };
 
-    // Create credentials object. You may as well do that programmatically.
-    let cred = Credentials::from_file("firebase-service-account.json")
-        .expect("Read credentials file")
-        .download_jwkset()
-        .expect("Failed to download public keys");
+    let result = documents::write(session, "ss", Some("service_test"), &obj, documents::WriteOptions::default())?;
 
-    // To use any of the Firestore methods, you need a session first. You either want
-    // an impersonated session bound to a Firebase Auth user or a service account session.
-    let session = ServiceSession::new(cred)
-        .expect("Create a service account session");
-
-    let result = documents::write(session, "/ss", Some("service_test"), &obj, documents::WriteOptions::default())?;
-    
     println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
     Ok(())
 }
@@ -97,10 +90,6 @@ async fn top_signup(
     let new_email  =  String::from(&params.email);
     let new_passwd = String::from(&params.passwd);
 
-    // println!("{}", new_email);
-    // println!("{}", new_passwd);
-    // println!("{}", "hello");
-    //
     match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
         Ok(response) => println!("signup successed"),
         Err(err) => println!("Error : {}", err),
@@ -146,43 +135,60 @@ async fn book() -> impl Responder {
     "hello book!"
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
+fn main() -> std::io::Result<()>{
+    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
+    let auth = ServiceSession::new(cred).unwrap();
 
-    std::env::set_var("RUST_LOG", "actix_web=info");
-    env_logger::init();
+    write(&auth);
 
-    // Generate a random secret key. Note that it is important to use a unique
-    // secret key for every project. Anyone with access to the key can generate
-    // authentication cookies for any user!
-    let secret_key = Key::generate();
-
-    HttpServer::new(|| {
-
-        let tera = match Tera::new("templates/*.html") {
-            Ok(t) => t,
-            Err(e) => {
-                println!("parsing error(s): {}", e);
-                ::std::process::exit(1);
-            }
-        };
-
-        App::new()
-            .data(tera)
-            .service(
-            // prefixes all resources and routes attached to it...
-            web::scope("/app")
-                // ...so this handles requests for `GET /app/top.html`
-                .route("/top", web::get().to(top))
-                .route("/home", web::get().to(home))
-                .route("/clothing", web::get().to(clothing))
-                .route("/book", web::get().to(book))
-                .route("/top/signup", web::post().to(top_signup))
-                .route("/top/signin", web::post().to(top_signin))
-                .route("/write_test", web::get().to(write))
-        )
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    Ok(())
 }
+
+// #[actix_web::main]
+// async fn main() -> std::io::Result<()> {
+
+//     std::env::set_var("RUST_LOG", "actix_web=info");
+//     env_logger::init();
+
+//     // Generate a random secret key. Note that it is important to use a unique
+//     // secret key for every project. Anyone with access to the key can generate
+//     // authentication cookies for any user!
+//     let secret_key = Key::generate();
+
+//     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
+//             // .expect("Read credentials file")
+//             // .download_jwkset()
+//             // .expect("Failed to download public keys");
+
+//     let auth = ServiceSession::new(cred).unwrap();
+//             // .expect("Create a service account session");
+
+//     HttpServer::new(|| {
+
+//         let tera = match Tera::new("templates/*.html") {
+//             Ok(t) => t,
+//             Err(e) => {
+//                 println!("parsing error(s): {}", e);
+//                 ::std::process::exit(1);
+//             }
+//         };
+
+//         App::new()
+//             .data(tera)
+//             .service(
+//             // prefixes all resources and routes attached to it...
+//             web::scope("/app")
+//                 // ...so this handles requests for `GET /app/top.html`
+//                 .route("/top", web::get().to(top))
+//                 .route("/home", web::get().to(home))
+//                 .route("/clothing", web::get().to(clothing))
+//                 .route("/book", web::get().to(book))
+//                 .route("/top/signup", web::post().to(top_signup))
+//                 .route("/top/signin", web::post().to(top_signin))
+//                 .route("/write_test", web::get().to(write))
+//         )
+//     })
+//     .bind(("127.0.0.1", 8080))?
+//     .run()
+//     .await
+// }
