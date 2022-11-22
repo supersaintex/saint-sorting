@@ -26,8 +26,17 @@ mod auth_error;
     a_string: Option<String>,
     an_int: u32,
  }
+// --------------------
+// html
+// --------------------
 
-// async fn write(session: &ServiceSession) -> Result<()> {
+#[derive(Serialize, Deserialize)]
+pub struct FormParams {
+    email: String,
+    passwd: String
+}
+
+
 fn write(session: &ServiceSession) -> Result<()> {
     let obj = DemoDTO { a_string: "abcd".to_owned(), an_int: 14, another_int: 10 };
 
@@ -37,6 +46,14 @@ fn write(session: &ServiceSession) -> Result<()> {
     Ok(())
 }
 
+// async fn write_web(session: &ServiceSession) -> Result<()> {
+//     let obj = DemoDTO { a_string: "abcd".to_owned(), an_int: 14, another_int: 10 };
+
+//     let result = documents::write(session, "ss", Some("service_test"), &obj, documents::WriteOptions::default())?;
+
+//     println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
+//     Ok(())
+// }
 
 // fn write_partial(session: &ServiceSession) -> Result<()> {
 //     let obj = DemoPartialDTO { a_string: None, an_int: 16 };
@@ -55,18 +72,9 @@ fn write(session: &ServiceSession) -> Result<()> {
 //     //     .map_err(|e| error::ErrorInternalServerError(e))?;
 
 //     // Ok(HttpResponse::Ok().content_type("text/html").body(view))
-// }
 
 
-// --------------------
-// html
-// --------------------
 
-#[derive(Serialize, Deserialize)]
-pub struct FormParams {
-    email: String,
-    passwd: String
-}
 
 async fn top(
     tmpl: web::Data<Tera>,)
