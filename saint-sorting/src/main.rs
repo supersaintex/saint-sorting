@@ -38,29 +38,25 @@ pub struct FormParams {
 
 // for write firestore_db
 #[derive(Serialize, Deserialize)]
-pub struct FormParams_db_test {
+pub struct FormParams_db_write {
     document_id: String,
     a_string: String,
     an_int: u32,
     another_int: u32,
 }
 
-// fn write(session: &ServiceSession) -> Result<()> {
-//     let obj = DemoDTO { a_string: "abcd".to_owned(), an_int: 14, another_int: 10 };
+// for delte from firestore_db
+#[derive(Serialize, Deserialize)]
+pub struct FormParams_db_delete{
+    document_id: String
+}
 
-//     let result = documents::write(session, "ss", Some("service_test"), &obj, documents::WriteOptions::default())?;
-
-//     println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
-//     Ok(())
-// }
-
-
-async fn write_top(
+async fn db_top(
     tmpl: web::Data<Tera>,)
     -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
-    let view = tmpl.render("write_firestore.html", &context)
+    let view = tmpl.render("db_top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
 
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
@@ -68,7 +64,7 @@ async fn write_top(
 }
 
 async fn write_firestore(
-    params: web::Form<FormParams_db_test>,
+    params: web::Form<FormParams_db_write>,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
@@ -86,11 +82,34 @@ async fn write_firestore(
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
 
-    let result = documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
+    // let result = documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
+    documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
 
     // println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
     
-    let view = tmpl.render("write_firestore.html", &context)
+    let view = tmpl.render("db_top.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+    
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+}
+
+
+async fn delete_firestore(
+    params: web::Form<FormParams_db_delete>,
+    tmpl: web::Data<Tera>,) 
+    -> actix_web::Result<HttpResponse, Error> {
+
+    
+    let context = Context::new();
+    
+    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
+    let auth = ServiceSession::new(cred).unwrap();
+   
+    //path to document
+    let path = String::from("ss/") + &params.document_id;
+    documents::delete(&auth, &path, true);
+
+    let view = tmpl.render("db_top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
@@ -224,10 +243,11 @@ async fn main() -> std::io::Result<()> {
                 .route("/home", web::get().to(home))
                 .route("/clothing", web::get().to(clothing))
                 .route("/book", web::get().to(book))
-                .route("/writetop", web::get().to(write_top))
+                .route("/dbtop", web::get().to(db_top))
                 .route("/top/signup", web::post().to(top_signup))
                 .route("/top/signin", web::post().to(top_signin))
-                .route("/writetop/firestoretest", web::post().to(write_firestore))
+                .route("/dbtop/writetest", web::post().to(write_firestore))
+                .route("/dbtop/deletetest", web::post().to(delete_firestore))
         )
     })
     .bind(("127.0.0.1", 8080))?

@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <title>
-    write firestore
+    Firestore test
   </title>
 </head>
 
 <body>
   <h1>write documets to firestore</h1>
-  <form class="form-horizontal" id="simpleForm" method="post" action="/app/writetop/firestoretest">
+  <form class="form-horizontal" id="simpleForm" method="post" action="/app/dbtop/writetest">
     <div class="form-group">
       <label for="document_id">Document ID</label>
       <input name="document_id" id="document_id" type="text">
@@ -26,8 +26,18 @@
       <label for="another_int">another_int</label>
       <input name="another_int" id="another_int" type="number">
     </div>
-    <button type="submit">Submit</button>
+    <button type="submit">Write</button>
   </form>
+
+  <h1>delete documets from firestore</h1>
+  <form class="form-horizontal" id="simpleForm" method="post" action="/app/dbtop/deletetest">
+    <div class="form-group">
+      <label for="document_id">Document ID</label>
+      <input name="document_id" id="document_id" type="text">
+    </div>
+    <button type="submit">Delete</button>
+  </form>
+</body>
 </body>
 
 </html>
