@@ -1,5 +1,3 @@
-use awc::{Client};
-// use fireauth::api::SignInResponse;
 use crate::{auth_error::Error};
 use serde::{Serialize, Deserialize};
 use serde_json;
