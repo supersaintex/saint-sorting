@@ -1,4 +1,3 @@
-use awc::{Client};
 use crate::{auth_error::Error};
 use serde::{Serialize, Deserialize};
 use serde_json;

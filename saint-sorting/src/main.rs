@@ -1,18 +1,15 @@
-use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error,
-                cookie::Key, middleware, HttpMessage as _};
+use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error};
 use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
-use actix_identity::{Identity, IdentityMiddleware};
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-use firestore_db_and_auth::{documents, documents::List, Credentials, 
-                            ServiceSession, errors::Result, errors::FirebaseError};
+use firestore_db_and_auth::{documents, Credentials, ServiceSession};
+
+// this time, unuse
+// use actix_identity::{Identity, IdentityMiddleware};
+// use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+// use firestore_db_and_auth::{documents::List, errors::Result, errors::FirebaseError};
 
 mod api;
 mod auth_error;
-
-// --------------------
-// firestore test
-// --------------------
 
 #[derive(Serialize, Deserialize)]
  struct DemoDTO {
@@ -29,7 +26,6 @@ mod auth_error;
 
 
 // for sign up and in
-
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
     email: String,
@@ -38,7 +34,7 @@ pub struct FormParams {
 
 // for write firestore_db
 #[derive(Serialize, Deserialize)]
-pub struct FormParams_db_write {
+pub struct FormParamsDbWrite {
     document_id: String,
     a_string: String,
     an_int: u32,
@@ -47,7 +43,7 @@ pub struct FormParams_db_write {
 
 // for delte from firestore_db
 #[derive(Serialize, Deserialize)]
-pub struct FormParams_db_delete{
+pub struct FormParamsDbDelete{
     document_id: String
 }
 
@@ -64,7 +60,7 @@ async fn db_top(
 }
 
 async fn write_firestore(
-    params: web::Form<FormParams_db_write>,
+    params: web::Form<FormParamsDbWrite>,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
@@ -73,7 +69,6 @@ async fn write_firestore(
     
     let new_doc_id  =  String::from(&params.document_id);
     let new_a_string = String::from(&params.a_string);
-    // let new_an_int = u32::from(&params.an_int);
     let new_an_int = params.an_int;
     let new_another_int = params.another_int;
 
@@ -82,8 +77,7 @@ async fn write_firestore(
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
 
-    // let result = documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
-    documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
+    let _result = documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
 
     // println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
     
@@ -95,7 +89,7 @@ async fn write_firestore(
 
 
 async fn delete_firestore(
-    params: web::Form<FormParams_db_delete>,
+    params: web::Form<FormParamsDbDelete>,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
@@ -107,7 +101,7 @@ async fn delete_firestore(
    
     //path to document
     let path = String::from("ss/") + &params.document_id;
-    documents::delete(&auth, &path, true);
+    let _result = documents::delete(&auth, &path, true);
 
     let view = tmpl.render("db_top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
@@ -138,7 +132,7 @@ async fn top_signup(
     let new_passwd = String::from(&params.passwd);
 
     match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
-        Ok(response) => println!("signup successed"),
+        Ok(_response) => println!("signup successed"),
         Err(err) => println!("Error : {}", err),
     }
 
@@ -161,7 +155,7 @@ async fn top_signin(
     let new_passwd = String::from(&params.passwd);
 
     match api::sign_in::sign_in_email(&new_email, &new_passwd, false).await {
-        Ok(response) => println!("sighin successed"),
+        Ok(_response) => println!("sighin successed"),
         Err(err) => println!("Error : {}", err),
     }
 
@@ -183,47 +177,11 @@ async fn book() -> impl Responder {
     "hello book!"
 }
 
-// ---------
-//test write
-// ---------
-
-// fn main() -> std::io::Result<()>{
-//     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
-//     let auth = ServiceSession::new(cred).unwrap();
-
-//     write(&auth);
-
-//     Ok(())
-// }
-
-// test delete
-// fn main() -> std::io::Result<()>{
-//     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
-//     let auth = ServiceSession::new(cred).unwrap();
-
-//     documents::delete(&auth, "ss/service_test", true);
-
-//     Ok(())
-// }
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
 
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
-
-    // Generate a random secret key. Note that it is important to use a unique
-    // secret key for every project. Anyone with access to the key can generate
-    // authentication cookies for any user!
-    let secret_key = Key::generate();
-
-    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
-            // .expect("Read credentials file")
-            // .download_jwkset()
-            // .expect("Failed to download public keys");
-
-    let auth = ServiceSession::new(cred).unwrap();
-            // .expect("Create a service account session");
 
     HttpServer::new(|| {
 
@@ -236,7 +194,7 @@ async fn main() -> std::io::Result<()> {
         };
 
         App::new()
-            .data(tera)
+            .app_data(tera)
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))
