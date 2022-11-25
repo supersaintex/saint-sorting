@@ -1,22 +1,117 @@
-use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error,
-                cookie::Key, middleware, HttpMessage as _};
+use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error};
 use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
-use actix_identity::{Identity, IdentityMiddleware};
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+use firestore_db_and_auth::{documents, Credentials, ServiceSession};
+
+// this time, unuse
+// use actix_identity::{Identity, IdentityMiddleware};
+// use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+// use firestore_db_and_auth::{documents::List, errors::Result, errors::FirebaseError};
 
 mod api;
 mod auth_error;
 
+#[derive(Serialize, Deserialize)]
+ struct DemoDTO {
+    a_string: String,
+    an_int: u32,
+    another_int: u32,
+ }
+ #[derive(Serialize, Deserialize)]
+ struct DemoPartialDTO {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    a_string: Option<String>,
+    an_int: u32,
+ }
+
+
+// for sign up and in
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
     email: String,
     passwd: String
 }
 
+// for write firestore_db
+#[derive(Serialize, Deserialize)]
+pub struct FormParamsDbWrite {
+    document_id: String,
+    a_string: String,
+    an_int: u32,
+    another_int: u32,
+}
+
+// for delte from firestore_db
+#[derive(Serialize, Deserialize)]
+pub struct FormParamsDbDelete{
+    document_id: String
+}
+
+async fn db_top(
+    tmpl: web::Data<Tera>,)
+    -> actix_web::Result<HttpResponse, Error> {
+
+    let context = Context::new();
+    let view = tmpl.render("db_top.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+
+}
+
+async fn write_firestore(
+    params: web::Form<FormParamsDbWrite>,
+    tmpl: web::Data<Tera>,) 
+    -> actix_web::Result<HttpResponse, Error> {
+
+    
+    let context = Context::new();
+    
+    let new_doc_id  =  String::from(&params.document_id);
+    let new_a_string = String::from(&params.a_string);
+    let new_an_int = params.an_int;
+    let new_another_int = params.another_int;
+
+    let obj = DemoDTO { a_string: new_a_string, an_int: new_an_int, another_int: new_another_int};
+
+    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
+    let auth = ServiceSession::new(cred).unwrap();
+
+    let _result = documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
+
+    // println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
+    
+    let view = tmpl.render("db_top.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+    
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+}
+
+
+async fn delete_firestore(
+    params: web::Form<FormParamsDbDelete>,
+    tmpl: web::Data<Tera>,) 
+    -> actix_web::Result<HttpResponse, Error> {
+
+    
+    let context = Context::new();
+    
+    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
+    let auth = ServiceSession::new(cred).unwrap();
+   
+    //path to document
+    let path = String::from("ss/") + &params.document_id;
+    let _result = documents::delete(&auth, &path, true);
+
+    let view = tmpl.render("db_top.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+    
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+}
+
 async fn top(
     tmpl: web::Data<Tera>,)
-    -> Result<HttpResponse, Error> {
+    -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
     let view = tmpl.render("top.html", &context)
@@ -29,19 +124,15 @@ async fn top(
 async fn top_signup(
     params: web::Form<FormParams>,
     tmpl: web::Data<Tera>,)
-    -> Result<HttpResponse, Error> {
+    -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
 
     let new_email  =  String::from(&params.email);
     let new_passwd = String::from(&params.passwd);
 
-    // println!("{}", new_email);
-    // println!("{}", new_passwd);
-    // println!("{}", "hello");
-    //
     match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
-        Ok(response) => println!("signup successed"),
+        Ok(_response) => println!("signup successed"),
         Err(err) => println!("Error : {}", err),
     }
 
@@ -56,7 +147,7 @@ async fn top_signup(
 async fn top_signin(
     params: web::Form<FormParams>,
     tmpl: web::Data<Tera>,)
-    -> Result<HttpResponse, Error> {
+    -> actix_web::Result<HttpResponse, Error> {
 
     let context = Context::new();
 
@@ -64,7 +155,7 @@ async fn top_signin(
     let new_passwd = String::from(&params.passwd);
 
     match api::sign_in::sign_in_email(&new_email, &new_passwd, false).await {
-        Ok(response) => println!("sighin successed"),
+        Ok(_response) => println!("sighin successed"),
         Err(err) => println!("Error : {}", err),
     }
 
@@ -73,41 +164,14 @@ async fn top_signin(
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
-
 }
-
-// /// simple index handler with session
-// async fn make_session(session: Session, req: HttpRequest) -> Result<&'static str> {
-//     log::info!("{:?}", req);
-
-//     // RequestSession trait is used for session access
-//     let mut counter = 1;
-//     if let Some(count) = session.get::<i32>("counter")? {
-//         log::info!("SESSION value: {}", count);
-//         counter = count + 1;
-//         session.insert("counter", counter)?;
-//     } else {
-//         session.insert("counter", counter)?;
-//     }
-
-//     Ok("welcome!")
-// }
-
-// async fn login_v2(req: HttpRequest) -> HttpResponse {
-//     Identity::login(&req.extensions(), "user1".to_owned()).unwrap();
-
-//     HttpResponse::Found()
-//         .insert_header(("location", "/"))
-//         .finish()
-// }
-
-
 
 async fn home() -> impl Responder {
-    "hello home!"
+     "hello home!"
 }
+
 async fn clothing() -> impl Responder {
-    "hello clothing!"
+     "hello clothing!"
 }
 async fn book() -> impl Responder {
     "hello book!"
@@ -118,11 +182,6 @@ async fn main() -> std::io::Result<()> {
 
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
-
-    // Generate a random secret key. Note that it is important to use a unique
-    // secret key for every project. Anyone with access to the key can generate
-    // authentication cookies for any user!
-    let secret_key = Key::generate();
 
     HttpServer::new(|| {
 
@@ -135,17 +194,18 @@ async fn main() -> std::io::Result<()> {
         };
 
         App::new()
-            .data(tera)
+            .app_data(tera)
             .service(
-            // prefixes all resources and routes attached to it...
             web::scope("/app")
-                // ...so this handles requests for `GET /app/top.html`
                 .route("/top", web::get().to(top))
                 .route("/home", web::get().to(home))
                 .route("/clothing", web::get().to(clothing))
                 .route("/book", web::get().to(book))
+                .route("/dbtop", web::get().to(db_top))
                 .route("/top/signup", web::post().to(top_signup))
                 .route("/top/signin", web::post().to(top_signin))
+                .route("/dbtop/writetest", web::post().to(write_firestore))
+                .route("/dbtop/deletetest", web::post().to(delete_firestore))
         )
     })
     .bind(("127.0.0.1", 8080))?

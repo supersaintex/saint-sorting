@@ -20,3 +20,5 @@ actix-session = { version = "0.7", features = ["cookie-session"] }
 
 env_logger = "0.9"
 rand = "0.8"
+
+firestore-db-and-auth = "0.6.1"
