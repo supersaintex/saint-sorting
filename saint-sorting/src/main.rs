@@ -194,7 +194,7 @@ async fn main() -> std::io::Result<()> {
         };
 
         App::new()
-            .app_data(tera)
+            .data(tera)
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))
