@@ -160,7 +160,7 @@ async fn top_signin(
     }
 
 
-    let view = tmpl.render("top.html", &context)
+    let view = tmpl.render("user.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
@@ -170,12 +170,31 @@ async fn home() -> impl Responder {
      "hello home!"
 }
 
-async fn clothing() -> impl Responder {
-     "hello clothing!"
+async fn clothing(
+    tmpl: web::Data<Tera>,)
+    -> actix_web::Result<HttpResponse, Error> {
+
+    let context = Context::new();
+    let view = tmpl.render("clothing.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+
 }
-async fn book() -> impl Responder {
-    "hello book!"
+
+
+async fn book(
+    tmpl: web::Data<Tera>,)
+    -> actix_web::Result<HttpResponse, Error> {
+
+    let context = Context::new();
+    let view = tmpl.render("book.html", &context)
+        .map_err(|e| error::ErrorInternalServerError(e))?;
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+
 }
+
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -194,7 +213,7 @@ async fn main() -> std::io::Result<()> {
         };
 
         App::new()
-            .app_data(tera)
+            .data(tera)
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))
@@ -204,6 +223,8 @@ async fn main() -> std::io::Result<()> {
                 .route("/dbtop", web::get().to(db_top))
                 .route("/top/signup", web::post().to(top_signup))
                 .route("/top/signin", web::post().to(top_signin))
+                .route("/top/book", web::get().to(book))
+                .route("/top/clothing", web::get().to(clothing))
                 .route("/dbtop/writetest", web::post().to(write_firestore))
                 .route("/dbtop/deletetest", web::post().to(delete_firestore))
         )
