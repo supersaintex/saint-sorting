@@ -17,6 +17,7 @@ thiserror = "1.0.30"
 
 actix-identity = "0.5"
 actix-session = { version = "0.7", features = ["cookie-session"] }
+actix-redis = "0.12.0"
 
 env_logger = "0.9"
 rand = "0.8"
