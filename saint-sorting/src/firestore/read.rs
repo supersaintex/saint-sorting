@@ -14,9 +14,10 @@ pub async fn read_firestore(
     let doc_id  =  String::from(&params.document_id);
     let obj : DemoDTO = documents::read(&auth, "ss", doc_id).unwrap();
 
+    println!("read start");
     println!("{}",obj.an_int);
-    println!("hello");
-
+    println!("read end");
+    
     let view = tmpl.render("db_top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
