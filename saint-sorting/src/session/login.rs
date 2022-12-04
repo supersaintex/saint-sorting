@@ -9,5 +9,5 @@ pub async fn login(req: HttpRequest) -> HttpResponse {
     HttpResponse::Found()
         .insert_header(("location", "/"))
         .finish()
-    
+ 
 }

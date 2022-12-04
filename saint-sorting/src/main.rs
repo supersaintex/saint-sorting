@@ -20,6 +20,9 @@ mod session;
 use firestore::{db_top::db_top, write_firestore::write_firestore, 
                 delete_firestore::delete_firestore, read::read_firestore};
 
+use session::{login::login}; 
+
+
 #[derive(Serialize, Deserialize)]
  struct DemoDTO {
     a_string: String,
@@ -176,7 +179,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/dbtop/writetest", web::post().to(write_firestore))
                 .route("/dbtop/deletetest", web::post().to(delete_firestore))
                 .route("/dbtop/readtest", web::post().to(read_firestore))
-                .route("/login", web::post().to(crate::session::login::login))
+                .route("/login", web::post().to(login))
         )
     })
     .bind(("127.0.0.1", 8080))?
