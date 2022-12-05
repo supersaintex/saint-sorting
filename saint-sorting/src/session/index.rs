@@ -3,7 +3,7 @@ use actix_session::{storage::CookieSessionStore, SessionMiddleware};
 use actix_web::{
     cookie::Key, middleware, web, App, HttpMessage as _, HttpRequest, HttpResponse, HttpServer,
 };
-async fn index(id: Identity) -> String {
+pub async fn index(id: Identity) -> String {
     format!(
         "Hello {}",
         id.id().unwrap_or_else(|_| "Anonymous".to_owned())
