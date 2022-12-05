@@ -4,6 +4,6 @@ use actix_web::{
     cookie::Key, middleware, web, App, HttpMessage as _, HttpRequest, HttpResponse, HttpServer,
 };
 
-pub mod session;
+pub mod index;
 pub mod login;
 pub mod logout;

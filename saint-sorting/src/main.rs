@@ -20,7 +20,7 @@ mod session;
 use firestore::{db_top::db_top, write_firestore::write_firestore, 
                 delete_firestore::delete_firestore, read::read_firestore};
 
-use session::{login::login}; 
+use session::{login::login, index::index}; 
 
 
 #[derive(Serialize, Deserialize)]
@@ -165,6 +165,9 @@ async fn main() -> std::io::Result<()> {
             // enable logger - always register Actix Web Logger middleware last
             .wrap(middleware::Logger::default())
             .data(tera)
+            .service(web::resource("/login").route(web::post().to(login)))
+            // .service(web::resource("/logout").to(logout))
+            .service(web::resource("/").route(web::get().to(index)))
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))
