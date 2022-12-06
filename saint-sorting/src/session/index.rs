@@ -1,27 +1,48 @@
-use actix_identity::{Identity, IdentityMiddleware};
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-use actix_web::{
-    cookie::Key, middleware, web, App, HttpMessage as _, HttpRequest, HttpResponse, HttpServer,
+use actix_session::{
+    config::PersistentSession, storage::CookieSessionStore, Session, SessionMiddleware,
 };
-pub async fn index(id: Identity) -> String {
-    format!(
-        "Hello {}",
-        id.id().unwrap_or_else(|_| "Anonymous".to_owned())
-    )
+use actix_web::{
+    cookie::{self, Key},
+    middleware::Logger,
+    web, App, HttpRequest, HttpServer, Result, Responder, Error,
+    HttpResponse
+};
+
+use uuid::Uuid;
+
+use serde_json::json;
+
+// simple index handler with session
+pub async fn index(session: Session, req: HttpRequest) 
+// -> Result<&'static str> {
+-> Result<impl Responder, Error> {
+    log::info!("{req:?}");
+
+    // RequestSession trait is used for session access
+    // let mut counter = 1;
+    // if let Some(count) = session.get::<i32>("counter")? {
+    //     log::info!("SESSION value: {count}");
+    //     counter = count + 1;
+    //     session.insert("counter", counter)?;
+    // } else {
+    //     session.insert("counter", counter)?;
+    // }
+
+    // println!("{}", counter);
+
+    // Ok("welcome!")
+    
+    let json = match session.get::<Uuid>("user_id")? {
+         Some(user_id) => json!({ "user_id": &user_id }),
+         None => {
+             let user_id = Uuid::new_v4();
+             session.insert("user_id", &user_id)?;
+ 
+             json!({"user_id": &user_id })
+         }
+     };
+ 
+     Ok(HttpResponse::Ok().json(&json))
+
+
 }
-
-// async fn login(req: HttpRequest) -> HttpResponse {
-//     Identity::login(&req.extensions(), "user1".to_owned()).unwrap();
-
-//     HttpResponse::Found()
-//         .insert_header(("location", "/"))
-//         .finish()
-// }
-
-// async fn logout(id: Identity) -> HttpResponse {
-//     id.logout();
-
-//     HttpResponse::Found()
-//         .insert_header(("location", "/"))
-//         .finish()
-// }

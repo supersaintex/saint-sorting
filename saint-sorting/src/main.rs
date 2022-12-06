@@ -4,10 +4,17 @@ use serde::{Serialize, Deserialize};
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
 // use firestore_db_and_auth::{documents::List, errors::Result, errors::FirebaseError};
 
-use actix_identity::{Identity, IdentityMiddleware};
-use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-use actix_web::{
-    cookie::Key, middleware, HttpMessage as _, HttpRequest};
+// use actix_identity::{Identity, IdentityMiddleware};
+// use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+// use actix_web::{
+//     cookie::{self, Key}, middleware, HttpMessage as _, HttpRequest};
+
+use actix_session::{
+    config::PersistentSession, storage::CookieSessionStore, Session, SessionMiddleware,
+};
+use actix_web::{cookie::{self, Key}, middleware::Logger, HttpRequest, Result};
+use uuid::Uuid;
+
 
 // -------------
 // local modules
@@ -20,7 +27,7 @@ mod session;
 use firestore::{db_top::db_top, write_firestore::write_firestore, 
                 delete_firestore::delete_firestore, read::read_firestore};
 
-use session::{login::login, index::index}; 
+use session::{index::index}; 
 
 
 #[derive(Serialize, Deserialize)]
@@ -43,7 +50,6 @@ pub struct FormParams {
     email: String,
     passwd: String
 }
-
 
 async fn top(
     tmpl: web::Data<Tera>,)
@@ -91,7 +97,7 @@ async fn top_signin(
     let new_passwd = String::from(&params.passwd);
 
     match api::sign_in::sign_in_email(&new_email, &new_passwd, false).await {
-        Ok(_response) => println!("sighin successed"),
+        Ok(_response) => println!("signin successed"),
         Err(err) => println!("Error : {}", err),
     }
 
@@ -122,8 +128,14 @@ async fn clothing(
 
 
 async fn book(
+    session :Session,
     tmpl: web::Data<Tera>,)
     -> actix_web::Result<HttpResponse, Error> {
+
+    if session.get::<Uuid>("user_id")?.is_none() {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
 
     let context = Context::new();
     let view = tmpl.render("book.html", &context)
@@ -139,11 +151,7 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
-    // Generate a random secret key. Note that it is important to use a unique
-    // secret key for every project. Anyone with access to the key can generate
-    // authentication cookies for any user!
-    let secret_key = Key::generate();
-
+    
     HttpServer::new(move || {
 
         let tera = match Tera::new("templates/*.html") {
@@ -155,17 +163,15 @@ async fn main() -> std::io::Result<()> {
         };
 
         App::new()
-            .wrap(IdentityMiddleware::default())
+            .wrap(Logger::default())
             .wrap(
-                SessionMiddleware::builder(CookieSessionStore::default(), secret_key.clone())
-                    .cookie_name("auth-example".to_owned())
+                SessionMiddleware::builder(CookieSessionStore::default(), Key::from(&[0; 64]))
+                    .cookie_name("example-user".to_owned())
                     .cookie_secure(false)
                     .build(),
             )
-            // enable logger - always register Actix Web Logger middleware last
-            .wrap(middleware::Logger::default())
             .data(tera)
-            .service(web::resource("/login").route(web::post().to(login)))
+            // .service(web::resource("/login").route(web::post().to(login)))
             // .service(web::resource("/logout").to(logout))
             .service(web::resource("/").route(web::get().to(index)))
             .service(
@@ -182,7 +188,6 @@ async fn main() -> std::io::Result<()> {
                 .route("/dbtop/writetest", web::post().to(write_firestore))
                 .route("/dbtop/deletetest", web::post().to(delete_firestore))
                 .route("/dbtop/readtest", web::post().to(read_firestore))
-                .route("/login", web::post().to(login))
         )
     })
     .bind(("127.0.0.1", 8080))?
