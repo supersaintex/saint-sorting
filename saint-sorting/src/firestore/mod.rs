@@ -1,4 +1,4 @@
 pub mod db_top;
-pub mod write_firestore;
-pub mod delete_firestore;
+pub mod write;
+pub mod delete;
 pub mod read;

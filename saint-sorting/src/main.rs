@@ -4,11 +4,6 @@ use serde::{Serialize, Deserialize};
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
 // use firestore_db_and_auth::{documents::List, errors::Result, errors::FirebaseError};
 
-// use actix_identity::{Identity, IdentityMiddleware};
-// use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-// use actix_web::{
-//     cookie::{self, Key}, middleware, HttpMessage as _, HttpRequest};
-
 use actix_session::{
     config::PersistentSession, storage::CookieSessionStore, Session, SessionMiddleware,
 };
@@ -24,8 +19,8 @@ mod auth_error;
 mod firestore;
 mod session;
 
-use firestore::{db_top::db_top, write_firestore::write_firestore, 
-                delete_firestore::delete_firestore, read::read_firestore};
+use firestore::{db_top::db_top, write::write_firestore, 
+                delete::delete_firestore, read::read_firestore};
 
 use session::{index::index}; 
 
@@ -101,9 +96,6 @@ async fn top_signin(
         Err(err) => println!("Error : {}", err),
     }
 
-    //login
-
-
     let view = tmpl.render("home.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
@@ -171,15 +163,11 @@ async fn main() -> std::io::Result<()> {
                     .build(),
             )
             .data(tera)
-            // .service(web::resource("/login").route(web::post().to(login)))
-            // .service(web::resource("/logout").to(logout))
             .service(web::resource("/").route(web::get().to(index)))
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))
                 .route("/home", web::get().to(home))
-                // .route("/clothing", web::get().to(clothing))
-                // .route("/book", web::get().to(book))
                 .route("/dbtop", web::get().to(db_top))
                 .route("/top/signup", web::post().to(top_signup))
                 .route("/top/signin", web::post().to(top_signin))
