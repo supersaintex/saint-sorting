@@ -17,8 +17,11 @@ thiserror = "1.0.30"
 
 actix-identity = "0.5"
 actix-session = { version = "0.7", features = ["cookie-session"] }
+actix-redis = "0.12.0"
 
 env_logger = "0.9"
 rand = "0.8"
+log = "0.4"
+uuid = { version = "0.8", features = ["serde", "v4"] }
 
 firestore-db-and-auth = "0.6.1"
