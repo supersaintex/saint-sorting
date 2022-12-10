@@ -1,9 +1,15 @@
 use crate::*;
 
 pub async fn read_firestore(
-    params: web::Form<FormParamsDbWrite>,
+    session: Session,
+    params: web::Form<FormParamsDbRead>,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
+
+    let user_id = match session.get::<Uuid>("user_id")? {
+        None => return Ok(HttpResponse::Unauthorized().finish()),
+        Some(i) => i.to_string()
+    };
 
     
     let context = Context::new();
@@ -12,10 +18,14 @@ pub async fn read_firestore(
     let auth = ServiceSession::new(cred).unwrap(); 
     
     let doc_id  =  String::from(&params.document_id);
-    let obj : DemoDTO = documents::read(&auth, "ss", doc_id).unwrap();
+    /*let obj : DemoDTO = documents::read(&auth, "ss", doc_id).unwrap();
+    */
 
+    let obj: MyDTO = documents::read(&auth, &user_id, doc_id).unwrap();
     println!("read start");
+    println!("{}",obj.a_string);
     println!("{}",obj.an_int);
+    println!("{}",obj.another_int);
     println!("read end");
     
     let view = tmpl.render("db_top.html", &context)
@@ -26,6 +36,13 @@ pub async fn read_firestore(
 
 
 #[derive(Serialize, Deserialize)]
-pub struct FormParamsDbWrite{
-    document_id: String
+pub struct FormParamsDbRead{
+    document_id: String,
+}
+
+#[derive(Serialize, Deserialize)]
+struct MyDTO {
+    a_string: String,
+    an_int: i32,
+    another_int: i32,
 }
