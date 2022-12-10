@@ -92,7 +92,8 @@ async fn top_signin(
 
     match api::sign_in::sign_in_email(&new_email, &new_passwd, false).await {
         Ok(_response) => println!("signin successed"),
-        Err(err) => println!("Error : {}", err),
+        Err(err) => {println!("Error : {}", err); return Ok(HttpResponse::Unauthorized().finish());},
+        //TODO! error handling: back to top page?
     }
 
     //access session data
@@ -102,7 +103,7 @@ async fn top_signin(
     //     session.insert("counter", 1)?;
     // }
 
-    let json = match session.get::<Uuid>("user_id")? {
+    let _json = match session.get::<Uuid>("user_id")? {
         Some(user_id) => json!({ "user_id": &user_id }),
         None => {
             let user_id = Uuid::new_v4();
