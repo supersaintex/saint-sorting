@@ -9,6 +9,7 @@ use actix_session::{
 };
 use actix_web::{cookie::{self, Key}, middleware::Logger, HttpRequest, Result};
 use uuid::Uuid;
+use serde_json::json;
 
 
 // -------------
@@ -21,8 +22,6 @@ mod session;
 
 use firestore::{db_top::db_top, write::write_firestore, 
                 delete::delete_firestore, read::read_firestore};
-
-use session::{index::index}; 
 
 
 #[derive(Serialize, Deserialize)]
@@ -73,7 +72,6 @@ async fn top_signup(
         Err(err) => println!("Error : {}", err),
     }
 
-
     let view = tmpl.render("top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
@@ -83,10 +81,11 @@ async fn top_signup(
 
 async fn top_signin(
     params: web::Form<FormParams>,
-    tmpl: web::Data<Tera>,)
+    tmpl: web::Data<Tera>,
+    session: Session)
     -> actix_web::Result<HttpResponse, Error> {
 
-    let context = Context::new();
+    let mut context = Context::new();
 
     let new_email  =  String::from(&params.email);
     let new_passwd = String::from(&params.passwd);
@@ -96,20 +95,44 @@ async fn top_signin(
         Err(err) => println!("Error : {}", err),
     }
 
-    let view = tmpl.render("home.html", &context)
+    //access session data
+    // if let Some(count) = session.get::<i32>("counter")? {
+    //     session.insert("counter", count + 1)?;
+    // } else {
+    //     session.insert("counter", 1)?;
+    // }
+
+    let json = match session.get::<Uuid>("user_id")? {
+        Some(user_id) => json!({ "user_id": &user_id }),
+        None => {
+            let user_id = Uuid::new_v4();
+            session.insert("user_id", &user_id)?;
+
+            json!({"user_id": &user_id })
+        }
+    };
+
+    context.insert("name", &new_email);
+    
+    let view = tmpl.render("user_home.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 }
 
 async fn home() -> impl Responder {
-     "hello home!"
+    "hello home!"
 }
 
 async fn clothing(
+    session: Session,
     tmpl: web::Data<Tera>,)
     -> actix_web::Result<HttpResponse, Error> {
 
+    if session.get::<Uuid>("user_id")?.is_none() {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    
     let context = Context::new();
     let view = tmpl.render("clothing.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
@@ -127,7 +150,6 @@ async fn book(
     if session.get::<Uuid>("user_id")?.is_none() {
         return Ok(HttpResponse::Unauthorized().finish());
     }
-
 
     let context = Context::new();
     let view = tmpl.render("book.html", &context)
@@ -158,12 +180,11 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .wrap(
                 SessionMiddleware::builder(CookieSessionStore::default(), Key::from(&[0; 64]))
-                    .cookie_name("example-user".to_owned())
+                    .cookie_name("seint".to_owned())
                     .cookie_secure(false)
                     .build(),
             )
             .data(tera)
-            .service(web::resource("/").route(web::get().to(index)))
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))
