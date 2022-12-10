@@ -1,11 +1,16 @@
 use crate::*;
 
 pub async fn write_firestore(
+    session: Session,
     params: web::Form<FormParamsDbWrite>,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
-    
+    let user_id = match session.get::<Uuid>("user_id")? {
+        None => return Ok(HttpResponse::Unauthorized().finish()),
+        Some(i) => i.to_string()
+    };
+
     let context = Context::new();
     
     let new_doc_id  =  String::from(&params.document_id);
@@ -18,7 +23,7 @@ pub async fn write_firestore(
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
 
-    let _result = documents::write(&auth, "ss", Some(new_doc_id), &obj, documents::WriteOptions::default());
+    let _result = documents::write(&auth, &user_id, Some(new_doc_id), &obj, documents::WriteOptions::default());
 
     // println!("id: {}, created: {}, updated: {}", result.document_id, result.create_time.unwrap(), result.update_time.unwrap());
     

@@ -1,5 +1,5 @@
 use actix_session::{
-    config::PersistentSession, storage::CookieSessionStore, Session, SessionMiddleware,
+    config::PersistentSession, storage::CookieSessionStore, Session, SessionMiddleware, SessionGetError
 };
 use actix_web::{
     cookie::{self, Key},
