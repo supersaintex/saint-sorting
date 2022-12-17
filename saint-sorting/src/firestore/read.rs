@@ -2,7 +2,8 @@ use crate::*;
 
 pub async fn read_firestore(
     session: Session,
-    params: web::Form<FormParamsDbRead>,
+    // params: web::Form<FormParamsDbRead>,
+    document_id: String,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
@@ -17,11 +18,11 @@ pub async fn read_firestore(
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap(); 
     
-    let doc_id  =  String::from(&params.document_id);
+    // let doc_id  =  String::from(&params.document_id);
     /*let obj : DemoDTO = documents::read(&auth, "ss", doc_id).unwrap();
     */
 
-    let obj: MyDTO = documents::read(&auth, &user_id, doc_id).unwrap();
+    let obj: MyDTO = documents::read(&auth, &user_id, document_id).unwrap();
     println!("read start");
     println!("{}",obj.a_string);
     println!("{}",obj.an_int);
