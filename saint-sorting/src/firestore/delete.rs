@@ -2,7 +2,8 @@ use crate::*;
 
 pub async fn delete_firestore(
     session:Session,
-    params: web::Form<FormParamsDbDelete>,
+    // params: web::Form<FormParamsDbDelete>,
+    document_id: String,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
@@ -17,9 +18,9 @@ pub async fn delete_firestore(
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
    
-    let doc_id = String::from(&params.document_id);
+    // let doc_id = String::from(&params.document_id);
     //path to document
-    let path = user_id + &String::from("/") + &doc_id;
+    let path = user_id + &String::from("/") + &document_id;
     let _result = documents::delete(&auth, &path, true);
 
     let view = tmpl.render("db_top.html", &context)
