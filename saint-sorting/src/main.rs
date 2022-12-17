@@ -101,12 +101,7 @@ async fn top_signin(
         //TODO! error handling: back to top page?
     }
 
-    //access session data
-    // if let Some(count) = session.get::<i32>("counter")? {
-    //     session.insert("counter", count + 1)?;
-    // } else {
-    //     session.insert("counter", 1)?;
-    // }
+  
 
     let _json = match session.get::<Uuid>("user_id")? {
         Some(user_id) => json!({ "user_id": &user_id }),

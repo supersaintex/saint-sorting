@@ -27,7 +27,7 @@ pub struct FormParamsClothing {
 }
 
 #[derive(Serialize, Deserialize)]
- struct DemoDTOClothing {
+struct DemoDTOClothing {
     brand: String,
     year: u32,
     month: u32,
