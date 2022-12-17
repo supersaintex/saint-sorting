@@ -6,5 +6,12 @@ pub async fn clothing_delete(
     tmpl: web::Data<Tera>,)
     -> actix_web::Result<HttpResponse, Error> {
 
-    delete_firestore(session, params, tmpl).await
+    let delete_doc_id: String  =  String::from(&params.document_id);
+
+    delete_firestore(session, delete_doc_id, tmpl).await
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct FormParamsDbDelete{
+    document_id: String
 }
