@@ -106,12 +106,16 @@ async fn top_signin(
     // }
 
     let _json = match session.get::<Uuid>("user_id")? {
-        Some(user_id) => json!({ "user_id": &user_id }),
+        Some(user_id) => {
+        json!({ "user_id": &user_id });
+        println!("Your_UserId_Is:{}", user_id);
+        context.insert("UserId", &user_id);
+    }
         None => {
             let user_id = Uuid::new_v4();
             session.insert("user_id", &user_id)?;
 
-            json!({"user_id": &user_id })
+            json!({"user_id": &user_id });
         }
     };
 
