@@ -23,7 +23,6 @@ mod contents;
 
 use firestore::{db_top::db_top, write::write_firestore,
                 delete::delete_firestore, read::read_firestore,};
-use crate::firestore::{write::FormParamsDbWrite, read::FormParamsDbRead, delete::FormParamsDbDelete};
 
 use contents::clothing::{page_view::clothing, write::clothing_write, 
                 read::clothing_read, delete::clothing_delete};
