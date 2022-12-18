@@ -1,9 +1,20 @@
 use crate::*;
 
-pub async fn read_firestore(
+// pub async fn clothing_read(
+//     params: web::Form<FormParamsDbRead>,
+//     session: Session,
+//     tmpl: web::Data<Tera>,)
+//     -> actix_web::Result<HttpResponse, Error> {
+
+//     let read_doc_id: String  =  String::from(&params.document_id);
+
+//     read_firestore(session, read_doc_id, tmpl).await
+// }
+
+pub async fn clothing_read(
     session: Session,
-    // params: web::Form<FormParamsDbRead>,
-    document_id: String,
+    params: web::Form<FormParamsDbRead>,
+    // document_id: String,
     tmpl: web::Data<Tera>,) 
     -> actix_web::Result<HttpResponse, Error> {
 
@@ -18,32 +29,31 @@ pub async fn read_firestore(
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap(); 
     
-    // let doc_id  =  String::from(&params.document_id);
+    let doc_id  =  String::from(&params.document_id);
     /*let obj : DemoDTO = documents::read(&auth, "ss", doc_id).unwrap();
     */
 
-    let obj: MyDTO = documents::read(&auth, &user_id, document_id).unwrap();
+    let obj: DemoDTOClothing = documents::read(&auth, &user_id, doc_id).unwrap();
     println!("read start");
-    println!("{}",obj.a_string);
-    println!("{}",obj.an_int);
-    println!("{}",obj.another_int);
+    println!("{}",obj.brand);
+    println!("{}",obj.year);
+    println!("{}",obj.month);
     println!("read end");
     
-    let view = tmpl.render("db_top.html", &context)
+    let view = tmpl.render("clothing.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
     
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 }
 
-
 #[derive(Serialize, Deserialize)]
 pub struct FormParamsDbRead{
-    document_id: String,
+    document_id: String
 }
 
 #[derive(Serialize, Deserialize)]
-struct MyDTO {
-    a_string: String,
-    an_int: i32,
-    another_int: i32,
-}
+struct DemoDTOClothing {
+    brand: String,
+    year: u32,
+    month: u32,
+ }

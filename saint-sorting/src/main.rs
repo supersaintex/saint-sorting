@@ -18,12 +18,14 @@ use serde_json::json;
 mod api;
 mod auth_error;
 mod firestore;
-mod session;
+// mod session;
+mod contents;
 
 use firestore::{db_top::db_top, write::write_firestore,
                 delete::delete_firestore, read::read_firestore,};
-use crate::firestore::{write::FormParamsDbWrite, read::FormParamsDbRead, delete::FormParamsDbDelete};
 
+use contents::clothing::{page_view::clothing, write::clothing_write, 
+                read::clothing_read, delete::clothing_delete};
 
 #[derive(Serialize, Deserialize)]
  struct DemoDTO {
@@ -98,12 +100,7 @@ async fn top_signin(
         //TODO! error handling: back to top page?
     }
 
-    //access session data
-    // if let Some(count) = session.get::<i32>("counter")? {
-    //     session.insert("counter", count + 1)?;
-    // } else {
-    //     session.insert("counter", 1)?;
-    // }
+  
 
     let _json = match session.get::<Uuid>("user_id")? {
         Some(user_id) => {
@@ -130,50 +127,6 @@ async fn top_signin(
 async fn home() -> impl Responder {
     "hello home!"
 }
-
-async fn clothing(
-    session: Session,
-    tmpl: web::Data<Tera>,)
-    -> actix_web::Result<HttpResponse, Error> {
-
-    if session.get::<Uuid>("user_id")?.is_none() {
-        return Ok(HttpResponse::Unauthorized().finish());
-    }
-    
-    let context = Context::new();
-    let view = tmpl.render("clothing.html", &context)
-        .map_err(|e| error::ErrorInternalServerError(e))?;
-
-    Ok(HttpResponse::Ok().content_type("text/html").body(view))
-
-}
-
-async fn clothing_write(
-    params: web::Form<FormParamsDbWrite>,
-    session: Session,
-    tmpl: web::Data<Tera>,)
-    -> actix_web::Result<HttpResponse, Error> {
-
-    write_firestore(session, params, tmpl).await
-}
-async fn clothing_read(
-    params: web::Form<FormParamsDbRead>,
-    session: Session,
-    tmpl: web::Data<Tera>,)
-    -> actix_web::Result<HttpResponse, Error> {
-
-    read_firestore(session, params, tmpl).await
-}
-async fn clothing_delete(
-    params: web::Form<FormParamsDbDelete>,
-    session: Session,
-    tmpl: web::Data<Tera>,)
-    -> actix_web::Result<HttpResponse, Error> {
-
-    delete_firestore(session, params, tmpl).await
-}
-
-
 
 async fn book(
     session :Session,
@@ -230,7 +183,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/clothing/write", web::post().to(clothing_write))
                 .route("/clothing/read", web::post().to(clothing_read))
                 .route("/clothing/delete", web::post().to(clothing_delete))
-                .route("/dbtop/writetest", web::post().to(write_firestore))
+                // .route("/dbtop/writetest", web::post().to(write_firestore))
                 .route("/dbtop/deletetest", web::post().to(delete_firestore))
                 .route("/dbtop/readtest", web::post().to(read_firestore))
         )
