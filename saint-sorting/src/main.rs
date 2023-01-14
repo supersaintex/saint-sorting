@@ -28,20 +28,6 @@ use contents::clothing::{page_view::clothing, write::clothing_write,
                          read::clothing_read, delete::clothing_delete,
                          read_list::clothing_read_list};
 
-#[derive(Serialize, Deserialize)]
- struct DemoDTO {
-    a_string: String,
-    an_int: u32,
-    another_int: u32,
- }
- #[derive(Serialize, Deserialize)]
- struct DemoPartialDTO {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    a_string: Option<String>,
-    an_int: u32,
- }
-
-
 // for sign up and in
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {

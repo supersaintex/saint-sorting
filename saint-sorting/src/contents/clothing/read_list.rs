@@ -30,6 +30,7 @@ pub async fn clothing_read_list(
         // The document is wrapped in a Result<> because fetching new data could have failed
         // let (doc, _metadata) = doc_result?;
         let (doc, _metadata) = doc_result.unwrap();
+        
         println!("{:?}", doc);
         // println!("{:?}", metadata);
         // println!("")
