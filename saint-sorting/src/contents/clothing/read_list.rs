@@ -3,13 +3,15 @@ use crate::*;
 // use firestore_db_and_auth::errors::FirebaseError;
 use firestore_db_and_auth::{documents};
 
+
 pub async fn clothing_read_list(
     session: Session,
     // params: web::Form<FormParamsDbRead>,
     // document_id: String,
     tmpl: web::Data<Tera>,
     ) 
-    -> actix_web::Result<HttpResponse, Error>
+    // -> actix_web::Result<HttpResponse, Error>
+    -> actix_web::Result<HttpResponse, super::clothing_error::MyError>
     // ->Result<(DTOClothing, Document), FirebaseError>
     {
 
@@ -28,22 +30,11 @@ pub async fn clothing_read_list(
     let values: documents::List<DTOClothing, _> = documents::list(&auth, &user_id);
     for doc_result in values {
         // The document is wrapped in a Result<> because fetching new data could have failed
-        // let (doc, _metadata) = doc_result?;
-        let (doc, _metadata) = doc_result.unwrap();
+        let (doc, _metadata) = doc_result?;
+        // let (doc, _metadata) = doc_result.unwrap();
         
         println!("{:?}", doc);
-        // println!("{:?}", metadata);
-        // println!("")
     }
-
-    // Ok(())
-
-    // let obj: DTOClothing = documents::read(&auth, &user_id, doc_id).unwrap();
-    // println!("read start");
-    // println!("{}",obj.brand);
-    // println!("{}",obj.year);
-    // println!("{}",obj.month);
-    // println!("read end");
     
     let view = tmpl.render("clothing.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
