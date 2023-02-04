@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Error, Debug, Clone)]
-pub enum MyError {
+pub enum ReadListError {
     #[error("{0}")]
     FirebaseError(String),
 
@@ -15,24 +15,23 @@ pub enum MyError {
     ActixWebError(String),
 }
 
-impl std::convert::From<firestore_db_and_auth::errors::FirebaseError> for MyError {
+impl std::convert::From<firestore_db_and_auth::errors::FirebaseError> for ReadListError {
     fn from(err: firestore_db_and_auth::errors::FirebaseError) -> Self {
-        MyError::FirebaseError(err.to_string())
+        ReadListError::FirebaseError(err.to_string())
     }
 }
-
 
 // Use default implementation for `error_response()` method
-impl actix_web::error::ResponseError for MyError {}
+impl actix_web::error::ResponseError for ReadListError {}
 
-impl std::convert::From<actix_session::SessionGetError> for MyError {
+impl std::convert::From<actix_session::SessionGetError> for ReadListError {
     fn from(err: actix_session::SessionGetError) -> Self {
-        MyError::SessionGetError(err.to_string())
+        ReadListError::SessionGetError(err.to_string())
     }
 }
 
-impl std::convert::From<actix_web::Error> for MyError {
+impl std::convert::From<actix_web::Error> for ReadListError {
     fn from(err: actix_web::Error) -> Self {
-        MyError::ActixWebError(err.to_string())
+        ReadListError::ActixWebError(err.to_string())
     }
 }
