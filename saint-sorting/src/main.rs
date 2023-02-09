@@ -25,21 +25,8 @@ use firestore::{db_top::db_top, write::write_firestore,
                 delete::delete_firestore, read::read_firestore,};
 
 use contents::clothing::{page_view::clothing, write::clothing_write, 
-                read::clothing_read, delete::clothing_delete};
-
-#[derive(Serialize, Deserialize)]
- struct DemoDTO {
-    a_string: String,
-    an_int: u32,
-    another_int: u32,
- }
- #[derive(Serialize, Deserialize)]
- struct DemoPartialDTO {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    a_string: Option<String>,
-    an_int: u32,
- }
-
+                         read::clothing_read, delete::clothing_delete,
+                         read_list::clothing_read_list};
 
 // for sign up and in
 #[derive(Serialize, Deserialize)]
@@ -47,7 +34,6 @@ pub struct FormParams {
     email: String,
     passwd: String
 }
-
 
 async fn top(
     tmpl: web::Data<Tera>,)
@@ -182,6 +168,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/clothing", web::get().to(clothing))
                 .route("/clothing/write", web::post().to(clothing_write))
                 .route("/clothing/read", web::post().to(clothing_read))
+                .route("/clothing/read_list", web::get().to(clothing_read_list))
                 .route("/clothing/delete", web::post().to(clothing_delete))
                 // .route("/dbtop/writetest", web::post().to(write_firestore))
                 .route("/dbtop/deletetest", web::post().to(delete_firestore))

@@ -8,6 +8,8 @@ pub async fn clothing(
     if session.get::<Uuid>("user_id")?.is_none() {
         return Ok(HttpResponse::Unauthorized().finish());
     }
+
+    
     
     let context = Context::new();
     let view = tmpl.render("clothing.html", &context)
