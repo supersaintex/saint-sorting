@@ -11,8 +11,7 @@ use uuid::Uuid;
 use serde_json::json;
 
 
-pub mod api;
-pub mod auth_error;
+mod api;
 mod firestore;
 mod contents;
 
