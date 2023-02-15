@@ -13,9 +13,7 @@ pub async fn clothing_read_list(
         None => return Ok(HttpResponse::Unauthorized().finish()),
         Some(i) => i.to_string()
     };
-    
     let context = Context::new();
-    
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap(); 
 
@@ -25,10 +23,8 @@ pub async fn clothing_read_list(
         let (doc, _metadata) = doc_result?;
         println!("{:?}", doc);
     }
-    
     let view = tmpl.render("clothing.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
-    
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 }
 

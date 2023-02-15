@@ -29,8 +29,6 @@ pub async fn sign_in_email(email: &str, password: &str, return_secure_token: boo
         let error = resp.json::<FailResponse>().await?.error;
         return Err(Error::SignIn(error.message));
     }
-
-        
     let body = resp.json::<Response>().await?;
 
     Ok(body)

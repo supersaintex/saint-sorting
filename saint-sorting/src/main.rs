@@ -1,24 +1,19 @@
-use actix_web::{web, App, HttpServer, Responder, HttpResponse, Error, error};
+use actix_web::{web::{self, Data}, App, HttpServer, Responder, HttpResponse, Error, error};
 use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
-// use firestore_db_and_auth::{documents::List, errors::Result, errors::FirebaseError};
 
 use actix_session::{
-    config::PersistentSession, storage::CookieSessionStore, Session, SessionMiddleware,
+    storage::CookieSessionStore, Session, SessionMiddleware,
 };
-use actix_web::{cookie::{self, Key}, middleware::Logger, HttpRequest, Result};
+use actix_web::{cookie::Key, middleware::Logger};
 use uuid::Uuid;
 use serde_json::json;
 
 
-// -------------
-// local modules
-// -------------
-mod api;
-mod auth_error;
+pub mod api;
+pub mod auth_error;
 mod firestore;
-// mod session;
 mod contents;
 
 use firestore::{db_top::db_top, write::write_firestore,
@@ -64,7 +59,6 @@ async fn top_signup(
 
     let view = tmpl.render("top.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
-    
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 
 }
@@ -86,7 +80,6 @@ async fn top_signin(
         //TODO! error handling: back to top page?
     }
 
-  
 
     let _json = match session.get::<Uuid>("user_id")? {
         Some(user_id) => {
@@ -103,10 +96,9 @@ async fn top_signin(
     };
 
     context.insert("name", &new_email);
-    
+
     let view = tmpl.render("user_home.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;
-    
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 }
 
@@ -137,7 +129,6 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
 
-    
     HttpServer::new(move || {
 
         let tera = match Tera::new("templates/*.html") {
@@ -156,7 +147,7 @@ async fn main() -> std::io::Result<()> {
                     .cookie_secure(false)
                     .build(),
             )
-            .data(tera)
+            .app_data(Data::new(tera))
             .service(
             web::scope("/app")
                 .route("/top", web::get().to(top))

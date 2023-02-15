@@ -6,11 +6,7 @@ pub enum ReadListError {
     FirebaseError(String),
 
     #[error("{0}")]
-    ActixWebResponseError(String),
-
-    #[error("{0}")]
     SessionGetError(String),
-    
     #[error("{0}")]
     ActixWebError(String),
 }
@@ -21,7 +17,6 @@ impl std::convert::From<firestore_db_and_auth::errors::FirebaseError> for ReadLi
     }
 }
 
-// Use default implementation for `error_response()` method
 impl actix_web::error::ResponseError for ReadListError {}
 
 impl std::convert::From<actix_session::SessionGetError> for ReadListError {

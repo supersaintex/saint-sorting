@@ -5,8 +5,6 @@ pub mod sign_in;
 
 pub use sign_in::{Response as SignInResponse};
 pub use sign_up::{Response as SignUpResponse};
-//pub use user::{User, UpdateUser, ProviderUserInfo, SendOobCode};
-//pub use token::{RefreshIdToken};
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,6 +15,5 @@ struct FailResponse {
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct FailResponseBody {
-    // code: u16,
     message: String,
 }

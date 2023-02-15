@@ -31,13 +31,9 @@ pub async fn sign_up_email(email: &str, password: &str, return_secure_token: boo
         return Err(Error::SignUp(error.message));
     }
 
-    //返すbodyの作成
     let body = resp.json::<Response>().await?;
 
     Ok(body)
-
-
-
 
 }
 
