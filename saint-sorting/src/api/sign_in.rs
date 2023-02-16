@@ -1,10 +1,10 @@
-use crate::{auth_error::Error};
+use crate::api::AuthError;
 use serde::{Serialize, Deserialize};
 use serde_json;
 use super::FailResponse;
 
 pub async fn sign_in_email(email: &str, password: &str, return_secure_token: bool) 
-    -> Result<Response, Error> {
+    -> Result<Response, AuthError> {
 
      let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={}",
@@ -27,10 +27,8 @@ pub async fn sign_in_email(email: &str, password: &str, return_secure_token: boo
 
     if resp.status() != 200 {
         let error = resp.json::<FailResponse>().await?.error;
-        return Err(Error::SignIn(error.message));
+        return Err(AuthError::SignIn(error.message));
     }
-
-        
     let body = resp.json::<Response>().await?;
 
     Ok(body)

@@ -7,8 +7,7 @@ pub async fn clothing_write(
     -> actix_web::Result<HttpResponse, Error> {
 
     let add_doc_id  =  String::from(&params.document_id);
-    
-    //Data Transfer Object
+
     let add_brand = String::from(&params.brand);
     let add_year = params.year;
     let add_month = params.month;

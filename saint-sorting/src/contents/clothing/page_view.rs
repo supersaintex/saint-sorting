@@ -9,8 +9,6 @@ pub async fn clothing(
         return Ok(HttpResponse::Unauthorized().finish());
     }
 
-    
-    
     let context = Context::new();
     let view = tmpl.render("clothing.html", &context)
         .map_err(|e| error::ErrorInternalServerError(e))?;

@@ -1,12 +1,10 @@
 pub mod sign_up;
 pub mod sign_in;
-//mod user;
-//mod token;
+pub mod auth_error;
 
 pub use sign_in::{Response as SignInResponse};
 pub use sign_up::{Response as SignUpResponse};
-//pub use user::{User, UpdateUser, ProviderUserInfo, SendOobCode};
-//pub use token::{RefreshIdToken};
+pub use auth_error::{Error as AuthError};
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,6 +15,5 @@ struct FailResponse {
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct FailResponseBody {
-    // code: u16,
     message: String,
 }
