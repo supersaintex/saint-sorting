@@ -3,34 +3,62 @@
 
 <head>
   <meta charset="utf-8">
-  <title>
-    clothing
-  </title>
+  <title>clothing</title>
+  <link rel="stylesheet" href="clothing.css">
 </head>
 
-<body>
-<h1>Clothing my page</h1>
-<h1>write documents to firestore</h1>
-  <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/write">
-    <div class="form-group">
-      <label for="document_id">Document ID</label>
-      <input name="document_id" id="document_id" type="text">
-    </div>
-    <div class="form-group">
-      <label for="brand">brand</label>
-      <input name="brand" id="brand" type="text">
-    </div>
-    <div class="form-group">
-      <label for="year">year</label>
-      <input name="year" id="year" type="number">
-    </div>
-    <div class="form-group">
-      <label for="month">month</label>
-      <input name="month" id="month" type="number">
-    </div>
-    <button type="submit">Write</button>
-  </form>
+<body>  
+<header>
+  <h1>Clothing</h1>
+  <p>You have these clothing.</p>
+</header>
 
+<main>
+  <div id="content">
+  <div id="main">
+    <h2> main doc(coming soon)
+    </h2>
+<!-- write  -->
+  <h1>write documents to firestore</h1> 
+  <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/write">
+      <div class="form-group">
+        <label for="document_id">Document ID</label>
+        <input name="document_id" id="document_id" type="text">
+      </div>
+      <div class="form-group">
+        <label for="brand">brand</label>
+        <input name="brand" id="brand" type="text">
+      </div>
+      <div class="form-group">
+        <label for="year">year</label>
+        <input name="year" id="year" type="number">
+      </div>
+      <div class="form-group">
+        <label for="month">month</label>
+        <input name="month" id="month" type="number">
+      </div>
+      <button type="submit">Write</button>
+    </form>
+
+<!-- NEW write GUI-->
+<h1> New write Form (now coding)</h1>
+<div>  
+  <form class="form-horizontal" method="post" action="/app/clothing/write">
+  <select name="pull-down">
+    <option value="brand">Brand</option>
+    <option value="year">Year</option>
+    <option value="month">Month</option>
+    <option value="season">Season</option>
+    <option value="shop">Shop</option>
+    <option value="type">Type</option>
+  </select>
+  <input name="document_id" id="document_id" type="text">
+  <button type="submit">Add</button>
+  </form>
+  <button type="submit">Write</button>
+</div> 
+
+<!-- delete -->
   <h1>delete documets from firestore</h1>
   <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/delete">
     <div class="form-group">
@@ -39,23 +67,35 @@
     </div>
     <button type="submit">Delete</button>
   </form>
+<!-- read -->
+    <h1>read documets from firestore</h1>
+    <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/read">
+      <div class="form-group">
+        <label for="document_id">Document ID</label>
+        <input name="document_id" id="document_id" type="text">
+      </div>
+      <button type="submit">Read</button>
+    </form>
+  <br>
+    <form method="get" action="/app/clothing/read_list">
+      <button type="submit">Read List</buttun> 
+      </form>
+  </div>
 
-  <h1>read documets from firestore</h1>
-  <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/read">
-    <div class="form-group">
-      <label for="document_id">Document ID</label>
-      <input name="document_id" id="document_id" type="text">
-    </div>
-    <button type="submit">Read</button>
-  </form>
-<br>
-<!-- read list test -->
-  <form method="get" action="/app/clothing/read_list">
-    <button type="submit">Read List</buttun> 
-  </form> 
-<!-- end of read list test -->
+  <nav>
+    <ul>
+      <li>add</li>
+      <li><a href="http://localhost:8080/app/book">book</li>
+      <li><a href="#">Setting</li>
+      <li><a href="#">Top Page</li>
+    </ul>
+  </nav>
+</div>
+</main>
+
+<footer>
+
+</footer>
 
 </body>
-
-
 </html>
