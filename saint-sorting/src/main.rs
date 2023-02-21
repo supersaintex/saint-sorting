@@ -1,13 +1,12 @@
-use actix_session::{
-    storage::CookieSessionStore, Session, SessionMiddleware,
-};
+use actix_files;
+use actix_session::{storage::CookieSessionStore, Session, SessionMiddleware};
 use actix_web::{web::{self, Data}, App, HttpServer, Responder, HttpResponse, Error, error, cookie::Key, middleware::Logger};
 use tera::{Tera, Context};
 use serde::{Serialize, Deserialize};
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
-
 use uuid::Uuid;
 use serde_json::json;
+use std::path::PathBuf;
 
 
 mod api;
@@ -127,6 +126,7 @@ async fn main() -> std::io::Result<()> {
                     .build(),
             )
             .app_data(Data::new(tera))
+            .service(actix_files::Files::new("/app/css", "templates/css/").show_files_listing())
             .service(
                 web::scope("/app")
                 .route("/top", web::get().to(top))
