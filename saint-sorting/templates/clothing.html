@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8">
   <title>clothing</title>
-  <link rel="stylesheet" href="clothing.css">
+  <link rel="stylesheet" href="clothing.css" type="text/css">
 </head>
 
-<body>  
+<body>
 <header>
   <h1>Clothing</h1>
   <p>You have these clothing.</p>
@@ -42,7 +42,7 @@
 
 <!-- NEW write GUI-->
 <h1> New write Form (now coding)</h1>
-<div>  
+<div>
   <form class="form-horizontal" method="post" action="/app/clothing/write">
   <select name="pull-down">
     <option value="brand">Brand</option>
@@ -78,16 +78,15 @@
     </form>
   <br>
     <form method="get" action="/app/clothing/read_list">
-      <button type="submit">Read List</buttun> 
-      </form>
+      <button type="submit">Read List</button>
+    </form>
   </div>
 
   <nav>
     <ul>
-      <li>add</li>
       <li><a href="http://localhost:8080/app/book">book</li>
       <li><a href="#">Setting</li>
-      <li><a href="#">Top Page</li>
+      <li><a href="http://localhost:8080/app/top">Top Page</li>
     </ul>
   </nav>
 </div>
