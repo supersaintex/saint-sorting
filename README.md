@@ -2,6 +2,8 @@
 
 ## how to run on your local
 
+place firebase-service-account.json in /saint-sorting/
+
 Terminal:
 ```
 Cargo run
