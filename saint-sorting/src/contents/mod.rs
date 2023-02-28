@@ -1,2 +1,2 @@
-pub mod clothing;
 pub mod book;
+pub mod clothing;

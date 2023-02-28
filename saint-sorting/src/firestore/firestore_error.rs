@@ -3,21 +3,18 @@ use thiserror::Error;
 #[derive(Error, Debug, Clone)]
 pub enum FireStoreError {
     #[error("{0}")]
-    FirebaseError(String),
+    Firebase(String),
 
     #[error("{0}")]
-    ActixWebResponseError(String),
+    SessionGet(String),
 
     #[error("{0}")]
-    SessionGetError(String),
-    
-    #[error("{0}")]
-    ActixWebError(String),
+    ActixWeb(String),
 }
 
 impl std::convert::From<firestore_db_and_auth::errors::FirebaseError> for FireStoreError {
     fn from(err: firestore_db_and_auth::errors::FirebaseError) -> Self {
-        FireStoreError::FirebaseError(err.to_string())
+        FireStoreError::Firebase(err.to_string())
     }
 }
 
@@ -26,12 +23,12 @@ impl actix_web::error::ResponseError for FireStoreError {}
 
 impl std::convert::From<actix_session::SessionGetError> for FireStoreError {
     fn from(err: actix_session::SessionGetError) -> Self {
-        FireStoreError::SessionGetError(err.to_string())
+        FireStoreError::SessionGet(err.to_string())
     }
 }
 
 impl std::convert::From<actix_web::Error> for FireStoreError {
     fn from(err: actix_web::Error) -> Self {
-        FireStoreError::ActixWebError(err.to_string())
+        FireStoreError::ActixWeb(err.to_string())
     }
 }

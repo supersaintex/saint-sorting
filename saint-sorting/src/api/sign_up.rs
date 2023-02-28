@@ -1,12 +1,13 @@
-use crate::api::AuthError;
-use serde::{Serialize, Deserialize};
-use serde_json;
 use super::FailResponse;
+use crate::api::AuthError;
+use serde::{Deserialize, Serialize};
+use serde_json;
 
-
-pub async fn sign_up_email(email: &str, password: &str, return_secure_token: bool) 
-    -> Result<Response, AuthError> {
-
+pub async fn sign_up_email(
+    email: &str,
+    password: &str,
+    return_secure_token: bool,
+) -> Result<Response, AuthError> {
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
         "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
@@ -18,10 +19,9 @@ pub async fn sign_up_email(email: &str, password: &str, return_secure_token: boo
         "return_secure_token": return_secure_token
     });
 
-
-
     let client = awc::Client::new();
-    let mut resp = client.post(&url)
+    let mut resp = client
+        .post(&url)
         .insert_header(("Content-Type", "application/json"))
         .send_json(&request)
         .await?;
@@ -34,7 +34,6 @@ pub async fn sign_up_email(email: &str, password: &str, return_secure_token: boo
     let body = resp.json::<Response>().await?;
 
     Ok(body)
-
 }
 
 #[derive(Debug, Serialize)]
