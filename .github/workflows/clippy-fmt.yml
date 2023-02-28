@@ -7,9 +7,6 @@ on:
 jobs:
   fmt:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: saint-sorting
     steps:
       - uses: actions/checkout@v2
       - uses: dtolnay/rust-toolchain@nightly
@@ -18,9 +15,6 @@ jobs:
 
   clippy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: saint-sorting
     steps:
       - uses: actions/checkout@v2
 
