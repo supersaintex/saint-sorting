@@ -22,7 +22,11 @@ pub async fn top_signup(
     let new_email = String::from(&params.email);
     let new_password = String::from(&params.password);
 
-    let authpayload = AuthPayLoad{email: &new_email, password: &new_password, return_secure_token: false};
+    let authpayload = AuthPayLoad {
+        email: &new_email,
+        password: &new_password,
+        return_secure_token: false,
+    };
 
     match auth::sign::sign_up_email(&authpayload).await {
         Ok(_response) => println!("signup successed"),
@@ -45,7 +49,11 @@ pub async fn top_signin(
     let email = String::from(&params.email);
     let password = String::from(&params.password);
 
-    let authpayload = AuthPayLoad{email: &email, password: &password, return_secure_token: false};
+    let authpayload = AuthPayLoad {
+        email: &email,
+        password: &password,
+        return_secure_token: false,
+    };
 
     match auth::sign::sign_in_email(&authpayload).await {
         Ok(_response) => println!("signin successed"),

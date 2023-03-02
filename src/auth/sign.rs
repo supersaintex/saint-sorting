@@ -3,9 +3,7 @@ use crate::auth::AuthError;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json;
 
-pub async fn sign_in_email(
-    authpayload: &AuthPayLoad<'_>
-) -> Result<SignInResponse, AuthError> {
+pub async fn sign_in_email(authpayload: &AuthPayLoad<'_>) -> Result<SignInResponse, AuthError> {
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={}",
         "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
@@ -20,9 +18,7 @@ pub async fn sign_in_email(
     auth_result
 }
 
-pub async fn sign_up_email(
-    authpayload: &AuthPayLoad<'_>
-) -> Result<SignUpResponse, AuthError> {
+pub async fn sign_up_email(authpayload: &AuthPayLoad<'_>) -> Result<SignUpResponse, AuthError> {
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
         "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
@@ -41,13 +37,11 @@ pub async fn auth<T: DeserializeOwned>(
     authpayload: &AuthPayLoad<'_>,
     url: &str,
 ) -> Result<T, AuthError> {
-
     let request = serde_json::json!({
         "email": authpayload.email,
         "password": authpayload.password,
         "return_secure_token": authpayload.return_secure_token,
     });
-
 
     let client = awc::Client::new();
     let mut resp = client
