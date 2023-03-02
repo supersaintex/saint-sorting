@@ -1,20 +1,18 @@
-use crate::*;
+use crate::{firestore::read::read_firestore, *};
 
 pub async fn clothing_read(
     session: Session,
     params: web::Form<FormParamsDbRead>,
     tmpl: web::Data<Tera>,
 ) -> actix_web::Result<HttpResponse, Error> {
-
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
 
     let document_id = String::from(&params.document_id);
 
-
     let read_result: DemoDTOClothing = match read_firestore(session, &auth, &document_id).await {
         Err(e) => return Err(e.into()),
-        Ok(dto) => dto
+        Ok(dto) => dto,
     };
 
     println!("read start");
@@ -22,7 +20,6 @@ pub async fn clothing_read(
     println!("{}", read_result.year);
     println!("{}", read_result.month);
     println!("read end");
-
 
     let context = Context::new();
     let view = tmpl

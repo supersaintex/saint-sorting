@@ -1,4 +1,4 @@
-use crate::firestore::firestore_error;
+use crate::firestore::{firestore_error, write::write_firestore};
 use crate::*;
 
 pub async fn clothing_write(

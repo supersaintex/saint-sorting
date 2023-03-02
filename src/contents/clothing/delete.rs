@@ -1,5 +1,5 @@
+use crate::firestore::{delete::delete_firestore, firestore_error};
 use crate::*;
-use crate::firestore::firestore_error;
 
 pub async fn clothing_delete(
     params: web::Form<FormParamsDbDelete>,
@@ -17,7 +17,6 @@ pub async fn clothing_delete(
         .render("clothing.html", &context)
         .map_err(error::ErrorInternalServerError)?;
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
-
 }
 
 #[derive(Serialize, Deserialize)]

@@ -1,5 +1,5 @@
-use crate::*;
 use super::firestore_error::FireStoreError;
+use crate::*;
 
 pub async fn delete_firestore(
     session: Session,
@@ -17,7 +17,6 @@ pub async fn delete_firestore(
     let _result = documents::delete(&auth, &path, true);
 
     Ok(())
-
 }
 
 #[derive(Serialize, Deserialize)]

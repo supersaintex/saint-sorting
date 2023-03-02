@@ -16,10 +16,6 @@ mod api;
 mod contents;
 mod firestore;
 
-use firestore::{
-    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore
-};
-
 use contents::{
     book::page_view::book,
     clothing::{
@@ -130,7 +126,6 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/app")
                     .route("/top", web::get().to(top))
                     .route("/home", web::get().to(home))
-                    .route("/dbtop", web::get().to(db_top))
                     .route("/top/signup", web::post().to(top_signup))
                     .route("/top/signin", web::post().to(top_signin))
                     .route("/book", web::get().to(book))
@@ -138,7 +133,7 @@ async fn main() -> std::io::Result<()> {
                     .route("/clothing/write", web::post().to(clothing_write))
                     .route("/clothing/read", web::post().to(clothing_read))
                     .route("/clothing/read_list", web::get().to(clothing_read_list))
-                    .route("/clothing/delete", web::post().to(clothing_delete))
+                    .route("/clothing/delete", web::post().to(clothing_delete)),
             )
     })
     .bind(("127.0.0.1", 8080))?
