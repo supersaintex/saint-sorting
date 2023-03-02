@@ -4,21 +4,15 @@ use actix_web::{
     error,
     middleware::Logger,
     web::{self, Data},
-    App, Error, HttpResponse, HttpServer, Responder,
+    App, Error, HttpResponse, HttpServer
 };
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use tera::{Context, Tera};
 use uuid::Uuid;
 
-mod api;
 mod contents;
 mod firestore;
-
-use firestore::{
-    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore,
-};
 
 use contents::{
     book::page_view::book,
@@ -28,79 +22,13 @@ use contents::{
     },
 };
 
-// for sign up and in
-#[derive(Serialize, Deserialize)]
-pub struct FormParams {
-    email: String,
-    passwd: String,
-}
+use firestore::{
+    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore,
+};
 
-async fn top(tmpl: web::Data<Tera>) -> actix_web::Result<HttpResponse, Error> {
-    let context = Context::new();
-    saint_sorting::render(tmpl, &context, "top.html")
-}
+use saint_sorting::{home, top, top_signin, top_signup};
 
-async fn top_signup(
-    params: web::Form<FormParams>,
-    tmpl: web::Data<Tera>,
-) -> actix_web::Result<HttpResponse, Error> {
-    let mut context = Context::new();
 
-    let new_email = String::from(&params.email);
-    let new_passwd = String::from(&params.passwd);
-
-    match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
-        Ok(_response) => println!("signup successed"),
-        Err(err) => {
-            println!("Error : {err}");
-            context.insert("failure_message", "signup failed...");
-        }
-    }
-
-    saint_sorting::render(tmpl, &context, "top.html")
-}
-
-async fn top_signin(
-    params: web::Form<FormParams>,
-    tmpl: web::Data<Tera>,
-    session: Session,
-) -> actix_web::Result<HttpResponse, Error> {
-    let mut context = Context::new();
-
-    let email = String::from(&params.email);
-    let passwd = String::from(&params.passwd);
-
-    match api::sign_in::sign_in_email(&email, &passwd, false).await {
-        Ok(_response) => println!("signin successed"),
-        Err(err) => {
-            println!("Error : {err}");
-            //return Ok(HttpResponse::Unauthorized().finish());
-            context.insert("failure_message", "signin failed...");
-            return saint_sorting::render(tmpl, &context, "top.html");
-        }
-    }
-
-    match session.get::<Uuid>("user_id")? {
-        Some(user_id) => {
-            json!({ "user_id": &user_id });
-            println!("Your_UserId_Is:{user_id}");
-            context.insert("UserId", &user_id);
-        }
-        None => {
-            let user_id = Uuid::new_v4();
-            session.insert("user_id", user_id)?;
-            json!({ "user_id": &user_id });
-            context.insert("UserId", &user_id);
-        }
-    };
-
-    context.insert("name", &email);
-    saint_sorting::render(tmpl, &context, "user_home.html")
-}
-
-async fn home() -> impl Responder {
-    "hello home!"
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
