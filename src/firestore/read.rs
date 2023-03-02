@@ -1,16 +1,15 @@
 use crate::*;
+use super::firestore_error::FireStoreError;
 
 pub async fn read_firestore(
     session: Session,
     document_id: String,
-    tmpl: web::Data<Tera>,
-) -> actix_web::Result<HttpResponse, Error> {
+) -> actix_web::Result<(), FireStoreError> {
     let user_id = match session.get::<Uuid>("user_id")? {
-        None => return Ok(HttpResponse::Unauthorized().finish()),
+        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
         Some(i) => i.to_string(),
     };
 
-    let context = Context::new();
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
 
@@ -22,10 +21,7 @@ pub async fn read_firestore(
     println!("{}", obj.another_int);
     println!("read end");
 
-    let view = tmpl
-        .render("db_top.html", &context)
-        .map_err(error::ErrorInternalServerError)?;
-    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+    Ok(())
 }
 
 #[derive(Serialize, Deserialize)]

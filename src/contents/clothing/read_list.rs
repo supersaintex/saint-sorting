@@ -15,7 +15,6 @@ pub async fn clothing_read_list(
 
     let values: documents::List<DTOClothing, _> = documents::list(&auth, &user_id);
     for doc_result in values {
-        // The document is wrapped in a Result<> because fetching new data could have failed
         let (doc, _metadata) = doc_result?;
         println!("{doc:?}");
     }

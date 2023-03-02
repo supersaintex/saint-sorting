@@ -139,9 +139,6 @@ async fn main() -> std::io::Result<()> {
                     .route("/clothing/read", web::post().to(clothing_read))
                     .route("/clothing/read_list", web::get().to(clothing_read_list))
                     .route("/clothing/delete", web::post().to(clothing_delete))
-                    // .route("/dbtop/writetest", web::post().to(write_firestore))
-                    .route("/dbtop/deletetest", web::post().to(delete_firestore))
-                    .route("/dbtop/readtest", web::post().to(read_firestore)),
             )
     })
     .bind(("127.0.0.1", 8080))?
