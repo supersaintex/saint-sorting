@@ -19,7 +19,10 @@ mod firestore;
 use contents::{
     book::page_view::book,
     clothing::{
-        delete::clothing_delete, page_view::clothing, read::{clothing_read,clothing_read_list}, write::clothing_write,
+        delete::clothing_delete,
+        page_view::clothing,
+        read::{clothing_read, clothing_read_list},
+        write::clothing_write,
     },
 };
 

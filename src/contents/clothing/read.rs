@@ -1,4 +1,10 @@
-use crate::{firestore::{read::{read_firestore, read_list_firestore},firestore_error}, *};
+use crate::{
+    firestore::{
+        firestore_error,
+        read::{read_firestore, read_list_firestore},
+    },
+    *,
+};
 use firestore_db_and_auth::documents;
 
 pub async fn clothing_read(
@@ -18,17 +24,17 @@ pub async fn clothing_read(
             context.insert("failure_message", "reading failed...");
             println!("firebase reading error: {e}");
             return saint_sorting::render(tmpl, &context, "clothing.html");
-        },
+        }
         Err(firestore_error::FireStoreError::SessionGet(e)) => {
             context.insert("failure_message", "authentication failed...");
             println!("session_error: {e}");
             return saint_sorting::render(tmpl, &context, "top.html");
-        },
+        }
         Err(firestore_error::FireStoreError::ActixWeb(e)) => {
             context.insert("failure_message", "server error...");
             println!("actixweb_error: {e}");
             return saint_sorting::render(tmpl, &context, "top.html");
-        },
+        }
 
         Ok(dto) => dto,
     };
@@ -62,7 +68,7 @@ pub async fn clothing_read_list(
             Err(_) => {
                 context.insert("failure_message", "reading failed...");
                 return saint_sorting::render(tmpl, &context, "clothing.html");
-            },
+            }
             Ok(dto_list) => dto_list,
         };
 
@@ -71,7 +77,7 @@ pub async fn clothing_read_list(
             Err(_e) => {
                 println!("cannot read doc");
                 continue;
-            },
+            }
             Ok(r) => r,
         };
         println!("{doc:?}");
