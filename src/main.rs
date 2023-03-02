@@ -17,7 +17,7 @@ mod contents;
 mod firestore;
 
 use firestore::{
-    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore,
+    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore
 };
 
 use contents::{

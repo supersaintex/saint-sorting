@@ -6,10 +6,13 @@ pub async fn clothing_read(
     tmpl: web::Data<Tera>,
 ) -> actix_web::Result<HttpResponse, Error> {
 
+    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
+    let auth = ServiceSession::new(cred).unwrap();
+
     let document_id = String::from(&params.document_id);
 
 
-    let read_result: DemoDTOClothing = match read_firestore(session, &document_id).await {
+    let read_result: DemoDTOClothing = match read_firestore(session, &auth, &document_id).await {
         Err(e) => return Err(e.into()),
         Ok(dto) => dto
     };
