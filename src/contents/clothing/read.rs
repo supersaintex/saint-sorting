@@ -3,26 +3,25 @@ use crate::*;
 pub async fn clothing_read(
     session: Session,
     params: web::Form<FormParamsDbRead>,
-    // document_id: String,
     tmpl: web::Data<Tera>,
 ) -> actix_web::Result<HttpResponse, Error> {
-    let user_id = match session.get::<Uuid>("user_id")? {
-        None => return Ok(HttpResponse::Unauthorized().finish()),
-        Some(i) => i.to_string(),
+
+    let document_id = String::from(&params.document_id);
+
+
+    let read_result: DemoDTOClothing = match read_firestore(session, &document_id).await {
+        Err(e) => return Err(e.into()),
+        Ok(dto) => dto
     };
 
-    let context = Context::new();
-    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
-    let auth = ServiceSession::new(cred).unwrap();
-    let doc_id = String::from(&params.document_id);
-
-    let obj: DemoDTOClothing = documents::read(&auth, &user_id, doc_id).unwrap();
     println!("read start");
-    println!("{}", obj.brand);
-    println!("{}", obj.year);
-    println!("{}", obj.month);
+    println!("{}", read_result.brand);
+    println!("{}", read_result.year);
+    println!("{}", read_result.month);
     println!("read end");
 
+
+    let context = Context::new();
     let view = tmpl
         .render("clothing.html", &context)
         .map_err(error::ErrorInternalServerError)?;
