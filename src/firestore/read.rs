@@ -11,7 +11,10 @@ pub async fn read_firestore<T: for<'a> Deserialize<'a>>(
         Some(i) => i.to_string(),
     };
 
-    let dto: T = documents::read(auth, &user_id, document_id).unwrap();
+    let dto: T = match documents::read(auth, &user_id, document_id) {
+        Err(e) => return Err(e.into()),
+        Ok(dto) => dto,
+    };
 
     Ok(dto)
 }
