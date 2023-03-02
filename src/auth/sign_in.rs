@@ -1,5 +1,5 @@
 use super::FailResponse;
-use crate::api::AuthError;
+use crate::auth::AuthError;
 use serde::{Deserialize, Serialize};
 use serde_json;
 

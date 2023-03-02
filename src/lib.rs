@@ -5,7 +5,7 @@ use serde_json::json;
 use tera::{Context, Tera};
 use uuid::Uuid;
 
-mod api;
+mod auth;
 
 pub fn render(
     tmpl: web::Data<Tera>,
@@ -39,7 +39,7 @@ pub async fn top_signup(
     let new_email = String::from(&params.email);
     let new_passwd = String::from(&params.passwd);
 
-    match api::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
+    match auth::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
         Ok(_response) => println!("signup successed"),
         Err(err) => {
             println!("Error : {err}");
@@ -60,7 +60,7 @@ pub async fn top_signin(
     let email = String::from(&params.email);
     let passwd = String::from(&params.passwd);
 
-    match api::sign_in::sign_in_email(&email, &passwd, false).await {
+    match auth::sign_in::sign_in_email(&email, &passwd, false).await {
         Ok(_response) => println!("signin successed"),
         Err(err) => {
             println!("Error : {err}");
