@@ -4,7 +4,7 @@ use actix_web::{
     error,
     middleware::Logger,
     web::{self, Data},
-    App, Error, HttpResponse, HttpServer
+    App, Error, HttpResponse, HttpServer,
 };
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
 use serde::{Deserialize, Serialize};
@@ -14,7 +14,6 @@ use uuid::Uuid;
 mod auth;
 mod contents;
 mod firestore;
-
 
 use auth::page_view::{top_signin, top_signup};
 
@@ -31,8 +30,6 @@ use firestore::{
 };
 
 use saint_sorting::{home, top};
-
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
