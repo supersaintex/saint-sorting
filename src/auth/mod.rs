@@ -2,6 +2,7 @@ pub mod auth_error;
 //pub mod sign_in;
 //pub mod sign_up;
 pub mod sign;
+pub mod page_view;
 
 pub use auth_error::Error as AuthError;
 //pub use sign_in::SignInResponse;

@@ -11,8 +11,12 @@ use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use uuid::Uuid;
 
+mod auth;
 mod contents;
 mod firestore;
+
+
+use auth::page_view::{top_signin, top_signup};
 
 use contents::{
     book::page_view::book,
@@ -26,7 +30,7 @@ use firestore::{
     db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore,
 };
 
-use saint_sorting::{home, top, top_signin, top_signup};
+use saint_sorting::{home, top};
 
 
 
