@@ -39,7 +39,8 @@ pub async fn top_signup(
     let new_email = String::from(&params.email);
     let new_passwd = String::from(&params.passwd);
 
-    match auth::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
+    //match auth::sign_up::sign_up_email(&new_email, &new_passwd, false).await {
+    match auth::sign::sign_up_email(&new_email, &new_passwd, false).await {
         Ok(_response) => println!("signup successed"),
         Err(err) => {
             println!("Error : {err}");
