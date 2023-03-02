@@ -7,7 +7,7 @@ pub async fn sign_up_email(
     email: &str,
     password: &str,
     return_secure_token: bool,
-) -> Result<Response, AuthError> {
+) -> Result<SignUpResponse, AuthError> {
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
         "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
@@ -31,7 +31,7 @@ pub async fn sign_up_email(
         return Err(AuthError::SignUp(error.message));
     }
 
-    let body = resp.json::<Response>().await?;
+    let body = resp.json::<SignUpResponse>().await?;
 
     Ok(body)
 }
@@ -46,7 +46,7 @@ struct SignUpPayload<'a> {
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Response {
+pub struct SignUpResponse {
     pub id_token: String,
     pub email: String,
     pub refresh_token: String,
