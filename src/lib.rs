@@ -60,7 +60,8 @@ pub async fn top_signin(
     let email = String::from(&params.email);
     let passwd = String::from(&params.passwd);
 
-    match auth::sign_in::sign_in_email(&email, &passwd, false).await {
+    //match auth::sign_in::sign_in_email(&email, &passwd, false).await {
+    match auth::sign::sign_in_email(&email, &passwd, false).await {
         Ok(_response) => println!("signin successed"),
         Err(err) => {
             println!("Error : {err}");
