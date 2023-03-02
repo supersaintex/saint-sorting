@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use uuid::Uuid;
 
+use super::sign::AuthPayLoad;
+
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
     email: String,
@@ -20,7 +22,9 @@ pub async fn top_signup(
     let new_email = String::from(&params.email);
     let new_password = String::from(&params.password);
 
-    match auth::sign::sign_up_email(&new_email, &new_password, false).await {
+    let authpayload = AuthPayLoad{email: &new_email, password: &new_password, return_secure_token: false};
+
+    match auth::sign::sign_up_email(&authpayload).await {
         Ok(_response) => println!("signup successed"),
         Err(err) => {
             println!("Error : {err}");
@@ -41,7 +45,9 @@ pub async fn top_signin(
     let email = String::from(&params.email);
     let password = String::from(&params.password);
 
-    match auth::sign::sign_in_email(&email, &password, false).await {
+    let authpayload = AuthPayLoad{email: &email, password: &password, return_secure_token: false};
+
+    match auth::sign::sign_in_email(&authpayload).await {
         Ok(_response) => println!("signin successed"),
         Err(err) => {
             println!("Error : {err}");

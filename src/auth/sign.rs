@@ -4,21 +4,14 @@ use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json;
 
 pub async fn sign_in_email(
-    email: &str,
-    password: &str,
-    return_secure_token: bool,
+    authpayload: &AuthPayLoad<'_>
 ) -> Result<SignInResponse, AuthError> {
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={}",
         "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
     );
-    let request = serde_json::json!({
-        "email": email,
-        "password": password,
-        "return_secure_token": return_secure_token,
-    });
 
-    let auth_result = auth(&request, &url).await;
+    let auth_result = auth(authpayload, &url).await;
 
     if let Err(AuthError::Auth(e)) = auth_result {
         return Err(AuthError::SignIn(e));
@@ -28,22 +21,14 @@ pub async fn sign_in_email(
 }
 
 pub async fn sign_up_email(
-    email: &str,
-    password: &str,
-    return_secure_token: bool,
+    authpayload: &AuthPayLoad<'_>
 ) -> Result<SignUpResponse, AuthError> {
     let url = format!(
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={}",
         "AIzaSyBvAE59iedRLnTKZYR1XRLw_4ozM8sx80k",
     );
 
-    let request = serde_json::json!({
-        "email": email,
-        "password": password,
-        "return_secure_token": return_secure_token,
-    });
-
-    let auth_result = auth(&request, &url).await;
+    let auth_result = auth(authpayload, &url).await;
 
     if let Err(AuthError::Auth(e)) = auth_result {
         return Err(AuthError::SignUp(e));
@@ -53,9 +38,17 @@ pub async fn sign_up_email(
 }
 
 pub async fn auth<T: DeserializeOwned>(
-    request: &serde_json::Value,
+    authpayload: &AuthPayLoad<'_>,
     url: &str,
 ) -> Result<T, AuthError> {
+
+    let request = serde_json::json!({
+        "email": authpayload.email,
+        "password": authpayload.password,
+        "return_secure_token": authpayload.return_secure_token,
+    });
+
+
     let client = awc::Client::new();
     let mut resp = client
         .post(url)
