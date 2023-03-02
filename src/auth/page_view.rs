@@ -8,7 +8,7 @@ use uuid::Uuid;
 #[derive(Serialize, Deserialize)]
 pub struct FormParams {
     email: String,
-    passwd: String,
+    password: String,
 }
 
 pub async fn top_signup(
@@ -18,9 +18,9 @@ pub async fn top_signup(
     let mut context = Context::new();
 
     let new_email = String::from(&params.email);
-    let new_passwd = String::from(&params.passwd);
+    let new_password = String::from(&params.password);
 
-    match auth::sign::sign_up_email(&new_email, &new_passwd, false).await {
+    match auth::sign::sign_up_email(&new_email, &new_password, false).await {
         Ok(_response) => println!("signup successed"),
         Err(err) => {
             println!("Error : {err}");
@@ -39,9 +39,9 @@ pub async fn top_signin(
     let mut context = Context::new();
 
     let email = String::from(&params.email);
-    let passwd = String::from(&params.passwd);
+    let password = String::from(&params.password);
 
-    match auth::sign::sign_in_email(&email, &passwd, false).await {
+    match auth::sign::sign_in_email(&email, &password, false).await {
         Ok(_response) => println!("signin successed"),
         Err(err) => {
             println!("Error : {err}");
