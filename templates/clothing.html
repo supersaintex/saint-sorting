@@ -10,6 +10,9 @@
 <body>
   <header>
     <h1>Clothing</h1>
+    {% if failure_message %}
+    <p>{{failure_message}}<p>
+    {% endif %}
     <p>You have these clothing.</p>
   </header>
 

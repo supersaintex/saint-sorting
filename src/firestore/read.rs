@@ -1,41 +1,39 @@
+use super::firestore_error::FireStoreError;
 use crate::*;
 
-pub async fn read_firestore(
+pub async fn read_firestore<T: for<'a> Deserialize<'a>>(
     session: Session,
-    document_id: String,
-    tmpl: web::Data<Tera>,
-) -> actix_web::Result<HttpResponse, Error> {
+    auth: &ServiceSession,
+    document_id: &str,
+) -> Result<T, FireStoreError> {
     let user_id = match session.get::<Uuid>("user_id")? {
-        None => return Ok(HttpResponse::Unauthorized().finish()),
+        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
         Some(i) => i.to_string(),
     };
 
-    let context = Context::new();
-    let cred = Credentials::from_file("firebase-service-account.json").unwrap();
-    let auth = ServiceSession::new(cred).unwrap();
+    let dto: T = match documents::read(auth, &user_id, document_id) {
+        Err(e) => return Err(e.into()),
+        Ok(dto) => dto,
+    };
 
-    let obj: MyDTO = documents::read(&auth, &user_id, document_id).unwrap();
+    Ok(dto)
+}
 
-    println!("read start");
-    println!("{}", obj.a_string);
-    println!("{}", obj.an_int);
-    println!("{}", obj.another_int);
-    println!("read end");
+pub async fn read_list_firestore<T: for<'a> Deserialize<'a>>(
+    session: Session,
+    auth: &ServiceSession,
+) -> Result<documents::List<T, firestore_db_and_auth::ServiceSession>, FireStoreError> {
+    let user_id = match session.get::<Uuid>("user_id")? {
+        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
+        Some(i) => i.to_string(),
+    };
 
-    let view = tmpl
-        .render("db_top.html", &context)
-        .map_err(error::ErrorInternalServerError)?;
-    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+    let dto_list: documents::List<T, _> = documents::list(auth, &user_id);
+
+    Ok(dto_list)
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct FormParamsDbRead {
     document_id: String,
-}
-
-#[derive(Serialize, Deserialize)]
-struct MyDTO {
-    a_string: String,
-    an_int: i32,
-    another_int: i32,
 }

@@ -20,13 +20,11 @@ use auth::page_view::{top_signin, top_signup};
 use contents::{
     book::page_view::book,
     clothing::{
-        delete::clothing_delete, page_view::clothing, read::clothing_read,
-        read_list::clothing_read_list, write::clothing_write,
+        delete::clothing_delete,
+        page_view::clothing,
+        read::{clothing_read, clothing_read_list},
+        write::clothing_write,
     },
-};
-
-use firestore::{
-    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore,
 };
 
 use saint_sorting::{home, top};
@@ -59,7 +57,6 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/app")
                     .route("/top", web::get().to(top))
                     .route("/home", web::get().to(home))
-                    .route("/dbtop", web::get().to(db_top))
                     .route("/top/signup", web::post().to(top_signup))
                     .route("/top/signin", web::post().to(top_signin))
                     .route("/book", web::get().to(book))
@@ -67,10 +64,7 @@ async fn main() -> std::io::Result<()> {
                     .route("/clothing/write", web::post().to(clothing_write))
                     .route("/clothing/read", web::post().to(clothing_read))
                     .route("/clothing/read_list", web::get().to(clothing_read_list))
-                    .route("/clothing/delete", web::post().to(clothing_delete))
-                    // .route("/dbtop/writetest", web::post().to(write_firestore))
-                    .route("/dbtop/deletetest", web::post().to(delete_firestore))
-                    .route("/dbtop/readtest", web::post().to(read_firestore)),
+                    .route("/clothing/delete", web::post().to(clothing_delete)),
             )
     })
     .bind(("127.0.0.1", 8080))?

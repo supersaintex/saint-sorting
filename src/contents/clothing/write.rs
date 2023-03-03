@@ -1,4 +1,4 @@
-use crate::firestore::firestore_error;
+use crate::firestore::{firestore_error, write::write_firestore};
 use crate::*;
 
 pub async fn clothing_write(
@@ -18,18 +18,14 @@ pub async fn clothing_write(
         month: add_month,
     };
 
-    //This measure is temporary. Should we avoid using clone?
-    let tmpl_copy = tmpl.clone();
-
     //write documents to database
-    match write_firestore(session, add_doc_id, &add_obj, tmpl).await {
-        Ok(_response) => (),
+    match write_firestore(session, add_doc_id, &add_obj).await {
+        Ok(_) => (),
         Err(error) => return Err(error),
     }
 
-    //show clothing page after write documents.
     let context = Context::new();
-    let view = tmpl_copy
+    let view = tmpl
         .render("clothing.html", &context)
         .map_err(error::ErrorInternalServerError)?;
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
