@@ -43,6 +43,9 @@ pub async fn clothing_read(
     println!("{}", read_result.brand);
     println!("{}", read_result.year);
     println!("{}", read_result.month);
+    println!("{}", read_result.season);
+    println!("{}", read_result.shop);
+    println!("{}", read_result.category);
     println!("read end");
 
     let view = tmpl
@@ -94,6 +97,9 @@ struct DTOClothing {
     brand: String,
     year: u32,
     month: u32,
+    season: String,
+    shop: String,
+    category: String,
 }
 
 #[derive(Serialize, Deserialize)]
