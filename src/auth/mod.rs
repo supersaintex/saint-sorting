@@ -1,10 +1,8 @@
 pub mod auth_error;
-pub mod sign_in;
-pub mod sign_up;
+pub mod page_view;
+pub mod sign;
 
 pub use auth_error::Error as AuthError;
-pub use sign_in::Response as SignInResponse;
-pub use sign_up::Response as SignUpResponse;
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
