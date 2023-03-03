@@ -27,10 +27,6 @@ use contents::{
     },
 };
 
-use firestore::{
-    db_top::db_top, delete::delete_firestore, read::read_firestore, write::write_firestore,
-};
-
 use saint_sorting::{home, top};
 
 #[actix_web::main]
