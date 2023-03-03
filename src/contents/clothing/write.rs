@@ -11,11 +11,17 @@ pub async fn clothing_write(
     let add_brand = String::from(&params.brand);
     let add_year = params.year;
     let add_month = params.month;
+    let add_season=  String::from(&params.season);
+    let add_shop  =  String::from(&params.shop);
+    let add_category=  String::from(&params.category);
 
     let add_obj = DemoDTOClothing {
         brand: add_brand,
         year: add_year,
         month: add_month,
+        season: add_season,
+        shop: add_shop,
+        category: add_category
     };
 
     //write documents to database
@@ -37,6 +43,9 @@ pub struct FormParamsClothing {
     brand: String,
     year: u32,
     month: u32,
+    season: String,
+    shop: String,
+    category: String
 }
 
 #[derive(Serialize, Deserialize)]
@@ -44,4 +53,7 @@ struct DemoDTOClothing {
     brand: String,
     year: u32,
     month: u32,
+    season: String,
+    shop: String,
+    category: String
 }
