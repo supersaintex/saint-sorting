@@ -17,7 +17,7 @@ access http://localhost:8080/app/top
 Terminal:
 ```
 cd /saint-sorting
-./run_with_browser.sh
+./run_with_browser.zsh
 ```
 ## solve openssl installation
 `sudo apt install libssl-dev pkg-config`
