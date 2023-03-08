@@ -39,9 +39,8 @@ pub async fn clothing_read(
         Ok(dto) => dto,
     };
 
-    let json_read_result = serde_json::to_value(&read_result).unwrap();
-    println!("{}", json_read_result.to_string());
-
+    let json_read_result = serde_json::to_value(read_result).unwrap();
+    println!("{json_read_result}");
 
     let view = tmpl
         .render("clothing.html", &context)
