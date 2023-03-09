@@ -14,10 +14,26 @@
     <p>{{failure_message}}<p>
     {% endif %}
     <p>You have these clothing.</p>
+    {% if brand %}
+    <p>{{brand}}</p>
+    {% endif %}
+    {% if year %}
+    <p>{{year}}</p>
+    {% endif %}
+    {% if month %}
+    <p>{{month}}</p>
+    {% endif %}
+    
+    {% if readList %}
+    <p>{{readList}}</p>
+    {% endif %}
+
+    
   </header>
 
   <main>
     <div id="content">
+      
     <div id="main">
       <h2> main doc(coming soon)
       </h2>
@@ -94,6 +110,6 @@
     </nav>
   </div>
   </main>
-
+    
 </body>
 </html>

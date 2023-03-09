@@ -7,6 +7,8 @@ use crate::{
 };
 use firestore_db_and_auth::documents;
 
+use once_cell::sync::Lazy;
+use std::sync::Mutex;
 pub async fn clothing_read(
     session: Session,
     params: web::Form<FormParamsDbRead>,
@@ -45,6 +47,10 @@ pub async fn clothing_read(
     println!("{}", read_result.month);
     println!("read end");
 
+    context.insert("brand", &read_result.brand);
+    context.insert("year", &read_result.year);
+    context.insert("month", &read_result.month);
+
     let view = tmpl
         .render("clothing.html", &context)
         .map_err(error::ErrorInternalServerError)?;
@@ -71,7 +77,14 @@ pub async fn clothing_read_list(
             }
             Ok(dto_list) => dto_list,
         };
+    fn type_of<T>(_: T) -> String{
+  let a = std::any::type_name::<T>();
+  return a.to_string();
+}
 
+println!("read_list_result's type is:{}", type_of(&read_list_result));
+
+    let mut readList = String::from("");
     for doc_result in read_list_result {
         let (doc, _metadata) = match doc_result {
             Err(_e) => {
@@ -80,14 +93,24 @@ pub async fn clothing_read_list(
             }
             Ok(r) => r,
         };
-        println!("{doc:?}");
+    
+        let doc_string = doc.to_string();
+        let concatenated = format!("brand :{} ,year :{} ,month :{}\n", doc_string.brand, doc_string.year, doc_string.month);
+        readList.push_str(&concatenated);
+        println!("{}", readList); 
     }
+    println!("{}", readList);
+    context.insert("readList", &readList);
+
+    
+
 
     let view = tmpl
         .render("clothing.html", &context)
         .map_err(error::ErrorInternalServerError)?;
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 }
+
 
 #[derive(Serialize, Deserialize, Debug)]
 struct DTOClothing {
@@ -99,4 +122,21 @@ struct DTOClothing {
 #[derive(Serialize, Deserialize)]
 pub struct FormParamsDbRead {
     document_id: String,
+}
+
+impl DTOClothing {
+    fn to_string(&self) -> DTOClothing_string {
+        DTOClothing_string{
+            brand: self.brand.to_string(),
+            year: self.year.to_string(),
+            month: self.month.to_string(),
+        }
+    
+    }
+}
+#[derive(Serialize, Deserialize)]
+pub struct DTOClothing_string{
+    brand: String,
+    year: String,
+    month: String,
 }

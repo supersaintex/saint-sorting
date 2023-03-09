@@ -20,6 +20,8 @@ header, div#main, nav, footer {
     }
 header {
     background-color: #339933;
+    white-space:pre-wrap;
+    color:khaki
     }
     
 div#content {
