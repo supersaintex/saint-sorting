@@ -39,14 +39,8 @@ pub async fn clothing_read(
         Ok(dto) => dto,
     };
 
-    println!("read start");
-    println!("{}", read_result.brand);
-    println!("{}", read_result.year);
-    println!("{}", read_result.month);
-    println!("{}", read_result.season);
-    println!("{}", read_result.shop);
-    println!("{}", read_result.category);
-    println!("read end");
+    let json_read_result = serde_json::to_value(read_result).unwrap();
+    println!("{json_read_result}");
 
     let view = tmpl
         .render("clothing.html", &context)
@@ -75,6 +69,7 @@ pub async fn clothing_read_list(
             Ok(dto_list) => dto_list,
         };
 
+    let mut string_doc_result = String::from("");
     for doc_result in read_list_result {
         let (doc, _metadata) = match doc_result {
             Err(_e) => {
@@ -83,8 +78,10 @@ pub async fn clothing_read_list(
             }
             Ok(r) => r,
         };
-        println!("{doc:?}");
+        let json_doc = serde_json::to_value(&doc).unwrap();
+        string_doc_result.push_str(&json_doc.to_string());
     }
+    println!("{string_doc_result}");
 
     let view = tmpl
         .render("clothing.html", &context)
