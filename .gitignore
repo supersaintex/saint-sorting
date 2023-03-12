@@ -1,2 +1,4 @@
 /target
 /firebase-service-account.json
+/tests/chromedriver
+/tests/selenium-server-standalone-3.141.59.jar
