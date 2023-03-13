@@ -7,6 +7,7 @@ use actix_web::{
     App, Error, HttpResponse, HttpServer,
 };
 use firestore_db_and_auth::{documents, Credentials, ServiceSession};
+use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use uuid::Uuid;
@@ -33,6 +34,14 @@ use saint_sorting::{home, top};
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
     env_logger::init();
+
+    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    builder
+        .set_private_key_file("localhost+2-key.pem", SslFiletype::PEM)
+        .unwrap();
+    builder
+        .set_certificate_chain_file("localhost+2.pem")
+        .unwrap();
 
     HttpServer::new(move || {
         let tera = match Tera::new("templates/*.html") {
@@ -67,7 +76,7 @@ async fn main() -> std::io::Result<()> {
                     .route("/clothing/delete", web::post().to(clothing_delete)),
             )
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind_openssl("127.0.0.1:8080", builder)?
     .run()
     .await
 }
