@@ -1,2 +1,4 @@
 /target
+/thirtyfour_test/target
 /firebase-service-account.json
+/*.pem
