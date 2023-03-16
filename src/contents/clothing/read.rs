@@ -7,8 +7,6 @@ use crate::{
 };
 use firestore_db_and_auth::documents;
 
-use once_cell::sync::Lazy;
-use std::sync::Mutex;
 pub async fn clothing_read(
     session: Session,
     params: web::Form<FormParamsDbRead>,
@@ -44,12 +42,10 @@ pub async fn clothing_read(
     println!("read start");
     println!("{}", read_result.brand);
     println!("{}", read_result.year);
-    println!("{}", read_result.month);
+    println!("{}", read_result.read_list);
     println!("read end");
 
-    context.insert("brand", &read_result.brand);
-    context.insert("year", &read_result.year);
-    context.insert("month", &read_result.month);
+    context.insert("read_list", &read_result.read_list);
 
     let view = tmpl
         .render("clothing.html", &context)
@@ -77,14 +73,8 @@ pub async fn clothing_read_list(
             }
             Ok(dto_list) => dto_list,
         };
-    fn type_of<T>(_: T) -> String{
-  let a = std::any::type_name::<T>();
-  return a.to_string();
-}
 
-println!("read_list_result's type is:{}", type_of(&read_list_result));
-
-    let mut readList = String::from("");
+    let mut read_list = String::from("");
     for doc_result in read_list_result {
         let (doc, _metadata) = match doc_result {
             Err(_e) => {
@@ -93,17 +83,17 @@ println!("read_list_result's type is:{}", type_of(&read_list_result));
             }
             Ok(r) => r,
         };
-    
+
         let doc_string = doc.to_string();
-        let concatenated = format!("brand :{} ,year :{} ,month :{}\n", doc_string.brand, doc_string.year, doc_string.month);
-        readList.push_str(&concatenated);
-        println!("{}", readList); 
+        let concatenated = format!(
+            "brand :{} ,year :{} ,read_list :{}\n",
+            doc_string.brand, doc_string.year, doc_string.read_list
+        );
+        read_list.push_str(&concatenated);
+        println!("{}", read_list);
     }
-    println!("{}", readList);
-    context.insert("readList", &readList);
-
-    
-
+    println!("{}", read_list);
+    context.insert("read_list", &read_list);
 
     let view = tmpl
         .render("clothing.html", &context)
@@ -111,12 +101,11 @@ println!("read_list_result's type is:{}", type_of(&read_list_result));
     Ok(HttpResponse::Ok().content_type("text/html").body(view))
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 struct DTOClothing {
     brand: String,
     year: u32,
-    month: u32,
+    read_list: u32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -125,18 +114,17 @@ pub struct FormParamsDbRead {
 }
 
 impl DTOClothing {
-    fn to_string(&self) -> DTOClothing_string {
-        DTOClothing_string{
+    fn to_string(&self) -> DTOClothingString {
+        DTOClothingString {
             brand: self.brand.to_string(),
             year: self.year.to_string(),
-            month: self.month.to_string(),
+            read_list: self.read_list.to_string(),
         }
-    
     }
 }
 #[derive(Serialize, Deserialize)]
-pub struct DTOClothing_string{
+pub struct DTOClothingString {
     brand: String,
     year: String,
-    month: String,
+    read_list: String,
 }

@@ -2148,7 +2148,6 @@ dependencies = [
  "fireauth",
  "firestore-db-and-auth",
  "log",
- "once_cell",
  "rand",
  "serde",
  "serde_json",
