@@ -20,7 +20,7 @@ fi
       exit 1
     fi
     if [ $pn -eq 1 ]; then
-      google-chrome http://127.0.0.1:8080/app/top
+      google-chrome https://127.0.0.1:8080/app/top
       exit 0
     fi
     sleep 1
