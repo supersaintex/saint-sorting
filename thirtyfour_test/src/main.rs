@@ -22,5 +22,11 @@ async fn main() -> color_eyre::Result<()> {
     let signin_buttom = driver.find(By::Id("button-2")).await?;
     signin_buttom.click().await?;
 
+    // You are at user_home.html.
+    // go to clothing page
+    //driver.goto("https:/127.0.0.1:8080/app/top/clothing").await?;
+    let clothing_link = driver.find(By::Id("clothing_link")).await?;
+    driver.goto("/app/clothing").await?;
+    
     Ok(())
 }
