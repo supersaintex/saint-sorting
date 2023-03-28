@@ -20,32 +20,13 @@
     <div id="content">
     <div id="main">
   <!-- NEW write GUI-->
-  <!--
-  <h1> New write Form (now coding)</h1>
-  <div>
-    <form class="form-horizontal" method="post" action="/app/clothing/write">
-    <select name="pull-down">
-      <option value="brand">Brand</option>
-      <option value="year">Year</option>
-      <option value="month">Month</option>
-      <option value="season">Season</option>
-      <option value="shop">Shop</option>
-      <option value="type">Type</option>
-    </select>
-    <input name="document_id" id="document_id" type="text">
-    <button type="submit">Add</button>
-    </form>
-    <button type="submit">Write</button>
-  </div> 
-  -->
-  <!-- NEW write GUI-->
     <h1> New write Form (now coding)</h1>
     <div>
       <form class="form-horizontal" method="post" action="/app/clothing/write">
       <!-- input clothing name as document id -->
         <div class="form-group">
           <label for="document_id">New Clothing Name</label>
-          <input name="document_id" id="document_id" type="text">
+          <input name="document_id" id="w_document_id" type="text">
         </div>
       <!-- brand -->
         <div class="form-group">
@@ -106,7 +87,7 @@
             <option value="accessories">Accessories</option> 
           </select>
         </div>
-        <button type="submit">Add</button>
+        <button type="submit" id="write_button">Add</button>
       </form>
 	  <!--      <button type="submit">Write</button> -->
     </div> 
