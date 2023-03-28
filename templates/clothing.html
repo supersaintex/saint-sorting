@@ -20,7 +20,7 @@
     <div id="content">
     <div id="main">
   <!-- delete -->
-    <h1>delete documets from firestore</h1>
+    <h2>delete documets from firestore</h2>
     <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/delete">
       <div class="form-group">
         <label for="document_id">Document ID</label>
@@ -29,7 +29,7 @@
       <button type="submit">Delete</button>
     </form>
   <!-- read -->
-      <h1>read documets from firestore</h1>
+      <h2>read documets from firestore</h2>
       <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/read">
         <div class="form-group">
           <label for="document_id">Document ID</label>
@@ -46,11 +46,11 @@
     <nav>
       <ul>
 		<li>
-		  <label class="open" for="pop-up">Add</label>
+		  <label class="open" for="pop-up" id="pop-up-label">Add</label>
 		  <input type="checkbox" id="pop-up">
 		  <div class="overlay">
 			<div class="window">
-			  <label class="close" for="pop-up">x</label>
+			  <label class="close" for="pop-up">close</label>
 		<div>
 		  <form class="form-horizontal" method="post" action="/app/clothing/write">
 		  <!-- input clothing name as document id -->
@@ -122,16 +122,20 @@
 		  <!--      <button type="submit">Write</button> -->
 		</div> 
 		</li>
-        <li><a href="http://localhost:8080/app/book">book</li>
+		<br>
+		<li><a href="https://localhost:8080/app/book">book</li>
+		<br>
         <li><a href="#">Setting</li>
-        <li><a href="http://localhost:8080/app/top">Top Page</li>
+		<br>
+        <li><a href="https://localhost:8080/app/top">Top Page</li>
       </ul>
     </nav>
   </div>
   </main>
-
+<!--
   <footer>
     <p>All rights reserved.</p>
   </footer>
+--!>
 </body>
 </html>
