@@ -42,10 +42,10 @@ pub async fn clothing_read(
     println!("read start");
     println!("{}", read_result.brand);
     println!("{}", read_result.year);
-    println!("{}", read_result.read_list);
+    println!("{}", read_result.month);
     println!("read end");
 
-    context.insert("read_list", &read_result.read_list);
+    context.insert("read_list", &read_result.brand);
 
     let view = tmpl
         .render("clothing.html", &context)
@@ -84,10 +84,9 @@ pub async fn clothing_read_list(
             Ok(r) => r,
         };
 
-        let doc_string = doc.to_string();
         let concatenated = format!(
-            "brand :{} ,year :{} ,read_list :{}\n",
-            doc_string.brand, doc_string.year, doc_string.read_list
+            "brand :{} ,year :{} ,month :{}\n",
+            doc.brand.to_string(), doc.year.to_string(), doc.month.to_string()
         );
         read_list.push_str(&concatenated);
         println!("{}", read_list);
@@ -105,7 +104,7 @@ pub async fn clothing_read_list(
 struct DTOClothing {
     brand: String,
     year: u32,
-    read_list: u32,
+    month: u32,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -113,18 +112,4 @@ pub struct FormParamsDbRead {
     document_id: String,
 }
 
-impl DTOClothing {
-    fn to_string(&self) -> DTOClothingString {
-        DTOClothingString {
-            brand: self.brand.to_string(),
-            year: self.year.to_string(),
-            read_list: self.read_list.to_string(),
-        }
-    }
-}
-#[derive(Serialize, Deserialize)]
-pub struct DTOClothingString {
-    brand: String,
-    year: String,
-    read_list: String,
-}
+
