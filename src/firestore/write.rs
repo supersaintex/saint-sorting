@@ -3,7 +3,7 @@ use crate::*;
 use super::firestore_error::FireStoreError;
 
 pub async fn write_firestore<T>(
-    session: Session,
+    session: &Session,
     document_id: String,
     obj: &T,
 ) -> Result<(), FireStoreError>

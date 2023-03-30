@@ -10,18 +10,21 @@
 <body>
   <header>
     <h1>Clothing</h1>
-    {% if failure_message %}
-    <p>{{failure_message}}<p>
+    {% if failure_message_write%}
+    <p>{{failure_message_write}}</p>
     {% endif %}
-    {% if read_list_result %}
-    <p>You have these clothing.</p>
-    <p>{{read_list_result}}<p>
+    {% if failure_message_read %}
+    <p>{{failure_message_read}}</p>
+    {% endif %}
+    {% if failure_message_delete%}
+    <p>{{failure_message_delete}}</p>
     {% endif %}
   </header>
 
   <main>
     <div id="content">
       <div id="main">
+
         <!-- delete -->
         <h2>delete documents from firestore</h2>
         <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/delete">
@@ -31,6 +34,14 @@
           </div>
           <button type="submit">Delete</button>
         </form>
+
+        <!--read_list result-->
+        <h2>You have these clothings...</h2>
+        {% if read_list_result %}
+        <p>{{read_list_result}}</p>
+        {% else %}
+        <p>No data!</p>
+        {% endif %}
       </div>
 
       <nav>
