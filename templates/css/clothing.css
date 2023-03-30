@@ -1,11 +1,14 @@
-body, h1, p {
-	margin: 0;
+body, p {
     padding: 0;
 	font-family: "Arial";
+	margin: 0;
 }
 
 h1 {
     color: #ffffff;
+	padding: 10px;
+	margin: 0;
+	font-family: "Arial";
 }
 
 h2 {
@@ -15,6 +18,7 @@ h2 {
 header p {
     line-height: 2em;
 	color: #ffffff;
+	padding: 10px;
 }
 /*
 header, div#main, nav, footer {

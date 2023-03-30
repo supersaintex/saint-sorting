@@ -24,6 +24,9 @@ async fn main() -> color_eyre::Result<()> {
     driver.goto("/app/clothing").await?;
    
     //write test
+    let pop_up_label = driver.find(By::Id("pop-up-label")).await?;
+    pop_up_label.click().await?;
+    
     let w_document_id = driver.find(By::Id("w_document_id")).await?;
     w_document_id.send_keys("Test-shirts").await?;
     
