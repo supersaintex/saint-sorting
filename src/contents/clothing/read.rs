@@ -9,7 +9,7 @@ use firestore_db_and_auth::documents;
 
 fn split_name_to_id(name: &str) -> &str {
     let split_name: Vec<&str> = name.rsplit('/').collect();
-    return split_name[0];
+    split_name[0]
 }
 
 pub async fn clothing_read(
@@ -82,7 +82,7 @@ pub async fn clothing_read_list(
         };
         let doc_id = split_name_to_id(&metadata.name);
         let json_doc = serde_json::to_value(&doc).unwrap();
-        string_doc_result.push_str(&doc_id);
+        string_doc_result.push_str(doc_id);
         string_doc_result.push_str(&json_doc.to_string());
     }
     //println!("{string_doc_result}");
