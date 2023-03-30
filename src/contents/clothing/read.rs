@@ -7,6 +7,11 @@ use crate::{
 };
 use firestore_db_and_auth::documents;
 
+fn split_name_to_id(name: &str) -> &str {
+    let split_name: Vec<&str> = name.rsplit('/').collect();
+    return split_name[0];
+}
+
 pub async fn clothing_read(
     session: Session,
     params: web::Form<FormParamsDbRead>,
@@ -40,13 +45,10 @@ pub async fn clothing_read(
     };
 
     let json_read_result = serde_json::to_value(read_result).unwrap();
-    println!("{json_read_result}");
+    //println!("{json_read_result}");
+    context.insert("read_result", &json_read_result.to_string());
 
-    let view = tmpl
-        .render("clothing.html", &context)
-        .map_err(error::ErrorInternalServerError)?;
-
-    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+    saint_sorting::render(tmpl, &context, "clothing.html")
 }
 
 pub async fn clothing_read_list(
@@ -71,22 +73,22 @@ pub async fn clothing_read_list(
 
     let mut string_doc_result = String::from("");
     for doc_result in read_list_result {
-        let (doc, _metadata) = match doc_result {
+        let (doc, metadata) = match doc_result {
             Err(_e) => {
                 println!("cannot read doc");
                 continue;
             }
             Ok(r) => r,
         };
+        let doc_id = split_name_to_id(&metadata.name);
         let json_doc = serde_json::to_value(&doc).unwrap();
+        string_doc_result.push_str(&doc_id);
         string_doc_result.push_str(&json_doc.to_string());
     }
-    println!("{string_doc_result}");
+    //println!("{string_doc_result}");
+    context.insert("read_list_result", &string_doc_result);
 
-    let view = tmpl
-        .render("clothing.html", &context)
-        .map_err(error::ErrorInternalServerError)?;
-    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+    saint_sorting::render(tmpl, &context, "clothing.html")
 }
 
 #[derive(Serialize, Deserialize, Debug)]

@@ -13,7 +13,14 @@
     {% if failure_message %}
     <p>{{failure_message}}<p>
     {% endif %}
+    {% if read_result %}
+    <p>clothing_read</p>
+    <p>{{read_result}}<p>
+    {% endif %}
+    {% if read_list_result %}
     <p>You have these clothing.</p>
+    <p>{{read_list_result}}<p>
+    {% endif %}
   </header>
 
   <main>
@@ -113,14 +120,14 @@
 				<option value="bottoms">bottoms</option>
 				<option value="outer">Outer</option>
 				<option value="socks">Socks</option>
-				<option value="bag">Bag</option> 
-				<option value="accessories">Accessories</option> 
+				<option value="bag">Bag</option>
+				<option value="accessories">Accessories</option>
 			  </select>
 			</div>
 			<button type="submit" id="write_button">Ok!</button>
 		  </form>
 		  <!--      <button type="submit">Write</button> -->
-		</div> 
+		</div>
 		</li>
 		<br>
 		<li><a href="https://localhost:8080/app/book">book</li>
