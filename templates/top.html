@@ -1,43 +1,47 @@
 <!DOCTYPE html>
 <html lang="jp">
-
 <head>
   <meta charset="utf-8">
-  <title>
-    saint-sorting sign up
-  </title>
+  <title> saint-sorting sign up </title>
+  <link rel="stylesheet" href="/app/css/top.css">
   <!-- <script srddc="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
   <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.css" /> -->
 </head>
-
 <body>
-  {% if failure_message %}
-  <h1>{{failure_message}}</h1>
-  {% endif %}
-  <h1>Sign up</h1>
-  <form class="form-horizontal" id="signUpForm" method="post" action="/app/top/signup">
-    <div class="form-group">
-      <label for="email">mail-address</label>
-      <input type="text" id="email" name="email">
-    </div>
-    <div class="form-group">
-      <label for="password">password</label>
-      <input type="text" id="password" name="password">
-    </div>
-    <button type="submit">Submit</button>
-  </form>
-
-  <h1>Sign in</h1>
-  <form class="form-horizontal" id="signInForm" method="post" action="/app/top/signin">
-    <div class="form-group">
-      <label for="email">mail-address</label>
-      <input type="text" id="email-2" name="email">
-    </div>
-    <div class="form-group">
-      <label for="password">password</label>
-      <input type="text" id="password-2" name="password">
-    </div>
-    <button type="submit" id="button-2">Submit</button>
-  </form>
+  <div class="center"> {% if failure_message %}
+    <h1>{{failure_message}}</h1> {% endif %}
+    <h1>Sign up</h1>
+    <form class="form-horizontal" id="signUpForm" method="post" action="/app/top/signup">
+      <table>
+        <tr>
+          <div class="form-group">
+            <th> <label for="email" class="sign">mail-address</label> </th>
+            <td> <input type="text" id="email" name="email"> </td>
+          </div>
+        </tr>
+        <tr>
+          <div class="form-group">
+            <th> <label for="password">password</label> </th>
+            <td> <input type="text" id="password" name="password"> </td>
+          </div>
+        </tr>
+      </table> <button type="submit">Hello!</button> </form> <br>
+    <h1>Sign in</h1>
+    <form class="form-horizontal" id="signInForm" method="post" action="/app/top/signin">
+      <table>
+        <tr>
+          <div class="form-group">
+            <th> <label for="email" class="sign">mail-address</label> </th>
+            <td> <input type="text" id="email-2" name="email"> </td>
+          </div>
+        </tr>
+        <tr>
+          <div class="form-group">
+            <th> <label for="password">password</label> </th>
+            <td> <input type="text" id="password-2" name="password"> </td>
+          </div>
+        </tr>
+      </table> <button type="submit" id="button-2">Hi!</button> </form>
+  </div>
 </body>
 </html>

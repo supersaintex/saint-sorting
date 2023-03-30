@@ -19,81 +19,8 @@
   <main>
     <div id="content">
     <div id="main">
-  <!-- NEW write GUI-->
-    <h1> New write Form (now coding)</h1>
-    <div>
-      <form class="form-horizontal" method="post" action="/app/clothing/write">
-      <!-- input clothing name as document id -->
-        <div class="form-group">
-          <label for="document_id">New Clothing Name</label>
-          <input name="document_id" id="w_document_id" type="text">
-        </div>
-      <!-- brand -->
-        <div class="form-group">
-          <label for="brand">brand</label>
-          <input name="brand" id="brand" type="text" class="form-control">
-        </div>
-      <!-- year -->
-        <div class="form-group">
-          <label for="year">year</label>
-          <input name="year" id="year" type="text" class="form-control">
-        </div>
-      <!--  month-->
-        <div class="form-group">
-          <label for="month">month</label>
-          <!-- <input name="month" id="month" type="number"> -->
-          <select id="month" name="month" class="form-control">
-            <option value=""></option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-          </select>
-        </div>
-      <!--season  -->
-        <div class="form-group">
-          <label for="season">season</label>
-          <select id="season" name="season" class="form-control">
-            <option value=""></option>
-            <option value="Spring">Spring</option>
-            <option value="Summer">Summer</option>
-            <option value="Autumn">Autumn</option>
-            <option value="Winter">Winter</option>
-          </select>
-        </div>
-      <!-- shop name -->
-        <div class="form-group">
-          <label for="shop">shopName/place</label>
-          <input name="shop" id="shop" type="text" class="form-control">
-        </div>
-      <!-- category -->
-        <div class="form-group">
-          <label for="category">Category</label>
-          <select id="category" name="category" class="form-control">
-            <option value=""></option>
-            <option value="tops">tops</option>
-            <option value="bottoms">bottoms</option>
-            <option value="outer">Outer</option>
-            <option value="socks">Socks</option>
-            <option value="bag">Bag</option> 
-            <option value="accessories">Accessories</option> 
-          </select>
-        </div>
-        <button type="submit" id="write_button">Add</button>
-      </form>
-	  <!--      <button type="submit">Write</button> -->
-    </div> 
-
   <!-- delete -->
-    <h1>delete documets from firestore</h1>
+    <h2>delete documets from firestore</h2>
     <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/delete">
       <div class="form-group">
         <label for="document_id">Document ID</label>
@@ -102,7 +29,7 @@
       <button type="submit">Delete</button>
     </form>
   <!-- read -->
-      <h1>read documets from firestore</h1>
+      <h2>read documets from firestore</h2>
       <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/read">
         <div class="form-group">
           <label for="document_id">Document ID</label>
@@ -118,16 +45,97 @@
 
     <nav>
       <ul>
-        <li><a href="http://localhost:8080/app/book">book</li>
+		<li>
+		  <label class="open" for="pop-up" id="pop-up-label">Add</label>
+		  <input type="checkbox" id="pop-up">
+		  <div class="overlay">
+			<div class="window">
+			  <label class="close" for="pop-up" id="pop-up-close">close</label>
+		<div>
+		  <form class="form-horizontal" method="post" action="/app/clothing/write">
+		  <!-- input clothing name as document id -->
+			<div class="form-group">
+			  <label for="document_id">New Clothing Name</label>
+			  <input name="document_id" id="w_document_id" type="text">
+			</div>
+		  <!-- brand -->
+			<div class="form-group">
+			  <label for="brand">brand</label>
+			  <input name="brand" id="brand" type="text" class="form-control">
+			</div>
+		  <!-- year -->
+			<div class="form-group">
+			  <label for="year">year</label>
+			  <input name="year" id="year" type="text" class="form-control">
+			</div>
+		  <!--  month-->
+			<div class="form-group">
+			  <label for="month">month</label>
+			  <!-- <input name="month" id="month" type="number"> -->
+			  <select id="month" name="month" class="form-control">
+				<option value=""></option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+			  </select>
+			</div>
+		  <!--season  -->
+			<div class="form-group">
+			  <label for="season">season</label>
+			  <select id="season" name="season" class="form-control">
+				<option value=""></option>
+				<option value="Spring">Spring</option>
+				<option value="Summer">Summer</option>
+				<option value="Autumn">Autumn</option>
+				<option value="Winter">Winter</option>
+			  </select>
+			</div>
+		  <!-- shop name -->
+			<div class="form-group">
+			  <label for="shop">shopName/place</label>
+			  <input name="shop" id="shop" type="text" class="form-control">
+			</div>
+		  <!-- category -->
+			<div class="form-group">
+			  <label for="category">Category</label>
+			  <select id="category" name="category" class="form-control">
+				<option value=""></option>
+				<option value="tops">tops</option>
+				<option value="bottoms">bottoms</option>
+				<option value="outer">Outer</option>
+				<option value="socks">Socks</option>
+				<option value="bag">Bag</option> 
+				<option value="accessories">Accessories</option> 
+			  </select>
+			</div>
+			<button type="submit" id="write_button">Ok!</button>
+		  </form>
+		  <!--      <button type="submit">Write</button> -->
+		</div> 
+		</li>
+		<br>
+		<li><a href="https://localhost:8080/app/book">book</li>
+		<br>
         <li><a href="#">Setting</li>
-        <li><a href="http://localhost:8080/app/top">Top Page</li>
+		<br>
+        <li><a href="https://localhost:8080/app/top">Top Page</li>
       </ul>
     </nav>
   </div>
   </main>
-
+<!--
   <footer>
     <p>All rights reserved.</p>
   </footer>
+--!>
 </body>
 </html>

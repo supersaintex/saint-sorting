@@ -1,0 +1,7 @@
+body, h1, h3, p {
+	font-family: "Arial";
+}
+.container{
+	width: 700px;
+	margin:0 auto;
+}
