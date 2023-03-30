@@ -94,7 +94,7 @@ pub async fn clothing_read_list_inner<'a>(
         let json_doc = serde_json::to_value(&doc).unwrap();
         string_doc_result.push_str(doc_id);
         string_doc_result.push_str(&json_doc.to_string());
-        string_doc_result.push_str("\n");
+        string_doc_result.push('\n');
     }
     //println!("{string_doc_result}");
     context.insert("read_list_result", &string_doc_result);
