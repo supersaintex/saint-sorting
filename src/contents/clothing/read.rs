@@ -6,6 +6,7 @@ use crate::{
     *,
 };
 use firestore_db_and_auth::documents;
+use std::collections::HashMap;
 
 fn split_name_to_id(name: &str) -> &str {
     let split_name: Vec<&str> = name.rsplit('/').collect();
@@ -58,7 +59,8 @@ pub async fn clothing_read_list(
     //ServiceSession reference is included in documents::List, so get auth outside of
     //read_list_firestore function.
     let mut context = Context::new();
-    let tmpl = clothing_read_list_inner(session, tmpl, &mut context).await;
+    let (tmpl, string_doc_result) = clothing_read_list_inner(session, tmpl, &mut context).await;
+    context.insert("read_list_result", &string_doc_result);
 
     saint_sorting::render(tmpl, &context, "clothing.html")
 }
@@ -67,7 +69,7 @@ pub async fn clothing_read_list_inner<'a>(
     session: &Session,
     tmpl: web::Data<Tera>,
     context: &mut Context,
-) -> web::Data<Tera> {
+) -> (web::Data<Tera>, HashMap<String, String>) {
     //read_list_firestore function.
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
@@ -76,12 +78,12 @@ pub async fn clothing_read_list_inner<'a>(
         match read_list_firestore(session, &auth).await {
             Err(_) => {
                 context.insert("failure_message_read", "reading failed...");
-                return tmpl;
+                return (tmpl, HashMap::new());
             }
             Ok(dto_list) => dto_list,
         };
 
-    let mut string_doc_result = String::from("");
+    let mut doc_result_map: HashMap<String, String> = HashMap::new();
     for doc_result in read_list_result {
         let (doc, metadata) = match doc_result {
             Err(_e) => {
@@ -92,14 +94,17 @@ pub async fn clothing_read_list_inner<'a>(
         };
         let doc_id = split_name_to_id(&metadata.name);
         let json_doc = serde_json::to_value(&doc).unwrap();
-        string_doc_result.push_str(doc_id);
-        string_doc_result.push_str(&json_doc.to_string());
-        string_doc_result.push('\n');
+        let mut string_doc_values = json_doc.to_string();
+        string_doc_values.retain(|c| c != '"');
+        string_doc_values = string_doc_values
+            .trim_matches('{')
+            .trim_matches('}')
+            .replace(",", "\n")
+            .to_string();
+        doc_result_map.insert(doc_id.to_string(), string_doc_values);
     }
-    //println!("{string_doc_result}");
-    context.insert("read_list_result", &string_doc_result);
 
-    tmpl
+    (tmpl, doc_result_map)
 }
 
 pub async fn clothing_read_list_render(
@@ -107,12 +112,10 @@ pub async fn clothing_read_list_render(
     tmpl: web::Data<Tera>,
     context: &mut Context,
 ) -> actix_web::Result<HttpResponse, Error> {
-    let tmpl = clothing_read_list_inner(session, tmpl, context).await;
-    let view = tmpl
-        .render("clothing.html", context)
-        .map_err(error::ErrorInternalServerError)?;
+    let (tmpl, doc_result_map) = clothing_read_list_inner(session, tmpl, context).await;
+    context.insert("doc_result_map", &doc_result_map);
 
-    Ok(HttpResponse::Ok().content_type("text/html").body(view))
+    saint_sorting::render(tmpl, context, "clothing.html")
 }
 
 #[derive(Serialize, Deserialize, Debug)]

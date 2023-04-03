@@ -37,8 +37,13 @@
 
         <!--read_list result-->
         <h2>You have these clothings...</h2>
-        {% if read_list_result %}
-        <p>{{read_list_result}}</p>
+        {% if doc_result_map %}
+          {% for key, value in doc_result_map %}
+            <details>
+              <summary>{{key}}</summary>
+                {{value}}
+            </details>
+          {% endfor %}
         {% else %}
         <p>No data!</p>
         {% endif %}
