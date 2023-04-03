@@ -59,8 +59,8 @@ pub async fn clothing_read_list(
     //ServiceSession reference is included in documents::List, so get auth outside of
     //read_list_firestore function.
     let mut context = Context::new();
-    let (tmpl, string_doc_result) = clothing_read_list_inner(session, tmpl, &mut context).await;
-    context.insert("read_list_result", &string_doc_result);
+    let (tmpl, doc_result_map) = clothing_read_list_inner(session, tmpl, &mut context).await;
+    context.insert("doc_result_map", &doc_result_map);
 
     saint_sorting::render(tmpl, &context, "clothing.html")
 }
