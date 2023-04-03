@@ -21,9 +21,7 @@ use auth::page_view::{top_signin, top_signup};
 use contents::{
     book::page_view::book,
     clothing::{
-        delete::clothing_delete,
-        page_view::clothing,
-        read::{clothing_read, clothing_read_list},
+        delete::clothing_delete, page_view::clothing, read::clothing_read_list,
         write::clothing_write,
     },
 };
@@ -71,8 +69,6 @@ async fn main() -> std::io::Result<()> {
                     .route("/book", web::get().to(book))
                     .route("/clothing", web::get().to(clothing))
                     .route("/clothing/write", web::post().to(clothing_write))
-                    .route("/clothing/read", web::post().to(clothing_read))
-                    .route("/clothing/read_list", web::get().to(clothing_read_list))
                     .route("/clothing/delete", web::post().to(clothing_delete)),
             )
     })

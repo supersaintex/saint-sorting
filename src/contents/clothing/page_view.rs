@@ -11,5 +11,5 @@ pub async fn clothing(
         return saint_sorting::render(tmpl, &context, "top.html");
     }
 
-    clothing_read_list(session, tmpl).await
+    clothing_read_list(&session, tmpl).await
 }

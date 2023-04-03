@@ -29,7 +29,7 @@ pub async fn clothing_delete(
             return saint_sorting::render(tmpl, &context, "top.html");
         }
     }
-    clothing_read_list_render(session, tmpl, &mut context).await
+    clothing_read_list_render(&session, tmpl, &mut context).await
 }
 
 #[derive(Serialize, Deserialize)]

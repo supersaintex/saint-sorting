@@ -52,7 +52,7 @@ pub async fn clothing_read(
 }
 
 pub async fn clothing_read_list(
-    session: Session,
+    session: &Session,
     tmpl: web::Data<Tera>,
 ) -> actix_web::Result<HttpResponse, Error> {
     //ServiceSession reference is included in documents::List, so get auth outside of
@@ -64,7 +64,7 @@ pub async fn clothing_read_list(
 }
 
 pub async fn clothing_read_list_inner<'a>(
-    session: Session,
+    session: &Session,
     tmpl: web::Data<Tera>,
     context: &mut Context,
 ) -> web::Data<Tera> {
@@ -103,7 +103,7 @@ pub async fn clothing_read_list_inner<'a>(
 }
 
 pub async fn clothing_read_list_render(
-    session: Session,
+    session: &Session,
     tmpl: web::Data<Tera>,
     context: &mut Context,
 ) -> actix_web::Result<HttpResponse, Error> {
