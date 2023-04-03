@@ -38,10 +38,12 @@
         <!--read_list result-->
         <h2>You have these clothings...</h2>
         {% if doc_result_map %}
-          {% for key, value in doc_result_map %}
+          {% for key, doc_values in doc_result_map %}
             <details>
               <summary>{{key}}</summary>
-                {{value}}
+              {% for value in doc_values %}
+                {{value}} <br>
+              {% endfor %}
             </details>
           {% endfor %}
         {% else %}

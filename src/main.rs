@@ -1,7 +1,6 @@
 use actix_session::{storage::CookieSessionStore, Session, SessionMiddleware};
 use actix_web::{
     cookie::Key,
-    error,
     middleware::Logger,
     web::{self, Data},
     App, Error, HttpResponse, HttpServer,

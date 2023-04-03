@@ -1,7 +1,7 @@
 use super::firestore_error::FireStoreError;
 use crate::*;
 
-pub async fn read_firestore<T: for<'a> Deserialize<'a>>(
+/*pub async fn read_firestore<T: for<'a> Deserialize<'a>>(
     session: &Session,
     auth: &ServiceSession,
     document_id: &str,
@@ -17,7 +17,7 @@ pub async fn read_firestore<T: for<'a> Deserialize<'a>>(
     };
 
     Ok(dto)
-}
+}*/
 
 pub async fn read_list_firestore<'b, T: for<'a> Deserialize<'a>>(
     session: &'b Session,

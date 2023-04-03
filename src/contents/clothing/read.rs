@@ -1,10 +1,4 @@
-use crate::{
-    firestore::{
-        firestore_error,
-        read::{read_firestore, read_list_firestore},
-    },
-    *,
-};
+use crate::{firestore::read::read_list_firestore, *};
 use firestore_db_and_auth::documents;
 use std::collections::HashMap;
 
@@ -13,7 +7,7 @@ fn split_name_to_id(name: &str) -> &str {
     split_name[0]
 }
 
-pub async fn clothing_read(
+/*pub async fn clothing_read(
     session: Session,
     params: web::Form<FormParamsDbRead>,
     tmpl: web::Data<Tera>,
@@ -50,7 +44,7 @@ pub async fn clothing_read(
     context.insert("read_result", &json_read_result.to_string());
 
     saint_sorting::render(tmpl, &context, "clothing.html")
-}
+}*/
 
 pub async fn clothing_read_list(
     session: &Session,
@@ -69,7 +63,7 @@ pub async fn clothing_read_list_inner<'a>(
     session: &Session,
     tmpl: web::Data<Tera>,
     context: &mut Context,
-) -> (web::Data<Tera>, HashMap<String, String>) {
+) -> (web::Data<Tera>, HashMap<String, Vec<String>>) {
     //read_list_firestore function.
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
@@ -83,7 +77,7 @@ pub async fn clothing_read_list_inner<'a>(
             Ok(dto_list) => dto_list,
         };
 
-    let mut doc_result_map: HashMap<String, String> = HashMap::new();
+    let mut doc_result_map: HashMap<String, Vec<String>> = HashMap::new();
     for doc_result in read_list_result {
         let (doc, metadata) = match doc_result {
             Err(_e) => {
@@ -99,9 +93,12 @@ pub async fn clothing_read_list_inner<'a>(
         string_doc_values = string_doc_values
             .trim_matches('{')
             .trim_matches('}')
-            .replace(",", "\n")
             .to_string();
-        doc_result_map.insert(doc_id.to_string(), string_doc_values);
+        let doc_values = string_doc_values
+            .split(',')
+            .map(|str| str.to_string())
+            .collect();
+        doc_result_map.insert(doc_id.to_string(), doc_values);
     }
 
     (tmpl, doc_result_map)
