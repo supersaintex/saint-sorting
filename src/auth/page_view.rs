@@ -78,6 +78,8 @@ pub async fn top_signin(
         }
     };
 
+    session.insert("email_address", &email)?;
+
     context.insert("name", &email);
     saint_sorting::render(tmpl, &context, "user_home.html")
 }
