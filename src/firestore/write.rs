@@ -18,7 +18,11 @@ where
 
     //unwrap email_address
     let email_address = match session.get::<String>("email_address")? {
-        None =>  return Err(FireStoreError::SessionGet(String::from("the email is not found."))),
+        None => {
+            return Err(FireStoreError::SessionGet(String::from(
+                "the email is not found.",
+            )))
+        }
         Some(i) => i.to_string(),
     };
 
