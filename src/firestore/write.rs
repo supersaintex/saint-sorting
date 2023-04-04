@@ -11,9 +11,19 @@ where
     T: Serialize,
 {
     //session check & unwrap user_id
-    let user_id = match session.get::<Uuid>("user_id")? {
+    let _user_id = match session.get::<Uuid>("user_id")? {
         None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
         Some(i) => i.to_string(),
+    };
+
+    //unwrap email_address
+    let email_address = match session.get::<String>("email_address")? {
+        None => {
+            return Err(FireStoreError::SessionGet(String::from(
+                "the email is not found.",
+            )))
+        }
+        Some(j) => j.to_string(),
     };
 
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
@@ -21,7 +31,7 @@ where
 
     let _result = documents::write(
         &auth,
-        &user_id,
+        &email_address,
         Some(document_id),
         &obj,
         documents::WriteOptions::default(),
