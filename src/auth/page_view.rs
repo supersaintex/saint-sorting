@@ -79,7 +79,7 @@ pub async fn top_signin(
     };
 
     //set email_address to session
-    session.insert("email_address", &authpayload.email);
+    session.insert("email_address", &authpayload.email)?;
 
     context.insert("name", &email);
     saint_sorting::render(tmpl, &context, "user_home.html")

@@ -18,12 +18,8 @@ where
 
     //unwrap email_address
     let email_address = match session.get::<String>("email_address")? {
-        None => {
-            return Err(FireStoreError::SessionGet(String::from(
-                "the email is not found.",
-            )))
-        }
-        Some(j) => j.to_string(),
+        None =>  return Err(FireStoreError::SessionGet(String::from("the email is not found."))),
+        Some(i) => i.to_string(),
     };
 
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
