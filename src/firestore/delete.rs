@@ -2,7 +2,7 @@ use super::firestore_error::FireStoreError;
 use crate::*;
 
 pub async fn delete_firestore(
-    session: Session,
+    session: &Session,
     document_id: String,
 ) -> actix_web::Result<(), FireStoreError> {
     let user_id = match session.get::<Uuid>("user_id")? {
