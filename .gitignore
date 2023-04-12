@@ -1,5 +1,5 @@
 /target
 /thirtyfour_test/target
-/thirtyfour_test/selenium-server-*.jar
+/thirtyfour_test/*.jar
 /firebase-service-account.json
 /*.pem
