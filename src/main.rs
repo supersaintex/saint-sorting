@@ -1,4 +1,4 @@
-use actix_session::{storage::CookieSessionStore, Session, SessionMiddleware};
+use actix_session::{storage::RedisSessionStore, Session, SessionMiddleware};
 use actix_web::{
     cookie::Key,
     middleware::Logger,
@@ -40,6 +40,12 @@ async fn main() -> std::io::Result<()> {
         .set_certificate_chain_file("localhost+2.pem")
         .unwrap();
 
+    let redis_key = Key::generate();
+    let redis_connection_string = "redis://127.0.0.1:6379";
+    let redis_store = RedisSessionStore::new(redis_connection_string)
+        .await
+        .unwrap();
+
     HttpServer::new(move || {
         let tera = match Tera::new("templates/*.html") {
             Ok(t) => t,
@@ -52,10 +58,14 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .wrap(
-                SessionMiddleware::builder(CookieSessionStore::default(), Key::from(&[0; 64]))
-                    .cookie_name("seint".to_owned())
-                    .cookie_secure(false)
-                    .build(),
+               /*  SessionMiddleware::builder(CookieSessionStore::default(), Key::from(&[0; 64])) */
+                    /* .cookie_name("seint".to_owned()) */
+                    /* .cookie_secure(false) */
+                    /* .build(), */
+                SessionMiddleware::new(
+                    redis_store.clone(),
+                    redis_key.clone()
+                )
             )
             .app_data(Data::new(tera))
             .service(actix_files::Files::new("/app/css", "templates/css/").show_files_listing())
