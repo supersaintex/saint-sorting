@@ -11,16 +11,16 @@ where
     T: Serialize,
 {
     //session check & unwrap user_id
-    let _user_id = match session.get::<Uuid>("user_id")? {
-        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
-        Some(i) => i.to_string(),
-    };
+//    let user_id = match session.get::<Uuid>("user_id")? {
+//        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
+//        Some(i) => i.to_string(),
+//    };
 
     //unwrap email_address
-    let email_address = match session.get::<String>("email_address")? {
+    let email_address2 = match session.get::<String>("email_address")? {
         None => {
             return Err(FireStoreError::SessionGet(String::from(
-                "the email is not found.",
+                "the email address is not found at write_firestore.",
             )))
         }
         Some(i) => i,
@@ -31,7 +31,8 @@ where
 
     let _result = documents::write(
         &auth,
-        &email_address,
+        //&user_id,
+        &email_address2,
         Some(document_id),
         &obj,
         documents::WriteOptions::default(),

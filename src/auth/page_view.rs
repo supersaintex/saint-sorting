@@ -80,6 +80,15 @@ pub async fn top_signin(
 
     session.insert("email_address", &email)?;
 
+    let email_address2 = match session.get::<String>("email_address")? {
+        None => {
+            panic!("There is not email-address at session.");
+        }
+        Some(i) => i,
+    };
+
+    println!("email-check:{}\n", email_address2);
+
     context.insert("name", &email);
     saint_sorting::render(tmpl, &context, "user_home.html")
 }

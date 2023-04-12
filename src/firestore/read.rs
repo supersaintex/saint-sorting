@@ -23,12 +23,23 @@ pub async fn read_list_firestore<'b, T: for<'a> Deserialize<'a>>(
     session: &'b Session,
     auth: &'b ServiceSession,
 ) -> Result<documents::List<'b, T, firestore_db_and_auth::ServiceSession>, FireStoreError> {
-    let user_id = match session.get::<Uuid>("user_id")? {
-        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
-        Some(i) => i.to_string(),
+    
+//    let user_id = match session.get::<Uuid>("user_id")? {
+//        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
+//        Some(i) => i.to_string(),
+//    };
+    //unwrap email_address
+    let email_address = match session.get::<String>("email_address")? {
+        None => {
+            return Err(FireStoreError::SessionGet(String::from(
+                "the email is not found.",
+            )))
+        }
+        Some(i) => i,
     };
 
-    let dto_list: documents::List<T, _> = documents::list(auth, &user_id);
+    let dto_list: documents::List<T, _> = documents::list(auth, &email_address);
+    //let dto_list: documents::List<T, _> = documents::list(auth, &user_id);
 
     Ok(dto_list)
 }

@@ -5,15 +5,25 @@ pub async fn delete_firestore(
     session: &Session,
     document_id: String,
 ) -> actix_web::Result<(), FireStoreError> {
-    let user_id = match session.get::<Uuid>("user_id")? {
+    let _user_id = match session.get::<Uuid>("user_id")? {
         None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
         Some(i) => i.to_string(),
+    };
+
+    //unwrap email_address
+    let email_address = match session.get::<String>("email_address")? {
+        None => {
+            return Err(FireStoreError::SessionGet(String::from(
+                "the email is not found.",
+            )))
+        }
+        Some(i) => i,
     };
 
     let cred = Credentials::from_file("firebase-service-account.json").unwrap();
     let auth = ServiceSession::new(cred).unwrap();
 
-    let path = user_id + &String::from("/") + &document_id;
+    let path = email_address + &String::from("/") + &document_id;
     let _result = documents::delete(&auth, &path, true);
 
     Ok(())
