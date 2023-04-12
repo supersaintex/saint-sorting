@@ -79,5 +79,6 @@ pub async fn top_signin(
     };
 
     context.insert("name", &email);
+    session.insert("email_address", email)?;
     saint_sorting::render(tmpl, &context, "user_home.html")
 }
