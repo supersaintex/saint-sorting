@@ -65,7 +65,7 @@ nav a:link {
     nav li {
     line-height: 2em;
     } */
-label#pop-up-label{
+label#pop-up-label-delete{
 	color: #ffffff;
 }
 nav label{
@@ -76,14 +76,25 @@ nav label{
 /*--------------*/
 .open {
 	cursor:pointer;
+	color: #ffffff;
 }
-#pop-up{
+#pop-up,#pop-up-delete{
 	display: none;
 }
 .overlay{
 	display: none;
 }
 #pop-up:checked+.overlay{
+display: block;
+	z-index: 9999;
+	background-color: #00000070;
+	position: fixed;
+	width: 100%;
+	height: 100vh;
+	top: 0;
+	left: 0;
+}
+#pop-up-delete:checked+.overlay{
 display: block;
 	z-index: 9999;
 	background-color: #00000070;

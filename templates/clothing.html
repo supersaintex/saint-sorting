@@ -26,7 +26,8 @@
       <div id="main">
 
         <!-- delete -->
-        <h2>delete documents from firestore</h2>
+        <!--
+				<h2>delete documents from firestore</h2>
         <form class="form-horizontal" id="simpleForm" method="post" action="/app/clothing/delete">
           <div class="form-group">
             <label for="document_id">Document ID</label>
@@ -34,7 +35,7 @@
           </div>
           <button type="submit">Delete</button>
         </form>
-
+				-->
         <!--read_list result-->
         <h2>You have these clothings...</h2>
         {% if doc_result_map %}
@@ -53,7 +54,7 @@
 
       <nav>
         <ul>
-          <li>
+						<li>
             <label class="open" for="pop-up" id="pop-up-label">Add</label>
             <input type="checkbox" id="pop-up">
 
@@ -142,13 +143,36 @@
                 </div>
               </div>
             </div>
-            <br>
+						</li>
+						<br>
+						<!-- delete button -->
+						<li>
+						<label class="open" for="pop-up" id="pop-up-label-delete">Delete</label>
+            <input type="checkbox" id="pop-up-delete">
+
+            <div class="overlay">
+              <div class="window">
+                <label class="close" for="pop-up" id="pop-up-close-delete">close</label>
+                <div>
+
+									<form class="form-horizontal" id="form-delete" method="post" action="/app/clothing/delete">
+										<div class="form-group">
+											<label for="document_id">Document ID</label>
+											<input name="document_id" id="d_document_id" type="text">
+										</div>
+										<button type="submit" id="delete_button">Delete</button>
+									</form>
+
+								</div>
+							</div>
+						</div>	
+						</li>
+						<br>
             <li><a href="https://localhost:8080/app/book">book</li>
             <br>
             <li><a href="#">Setting</li>
             <br>
             <li><a href="https://localhost:8080/app/top">Top Page</li>
-          </li>
         </ul>
       </nav>
     </div>
