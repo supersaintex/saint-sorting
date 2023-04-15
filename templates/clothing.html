@@ -147,17 +147,17 @@
 						<br>
 						<!-- delete button -->
 						<li>
-						<label class="open" for="pop-up" id="pop-up-label-delete">Delete</label>
+						<label class="open" for="pop-up-delete" id="pop-up-label-delete">Delete</label>
             <input type="checkbox" id="pop-up-delete">
 
             <div class="overlay">
-              <div class="window">
+              <div class="window" id="window_delete">
                 <label class="close" for="pop-up" id="pop-up-close-delete">close</label>
                 <div>
 
 									<form class="form-horizontal" id="form-delete" method="post" action="/app/clothing/delete">
 										<div class="form-group">
-											<label for="document_id">Document ID</label>
+											<label for="document_id">Clothing Name</label>
 											<input name="document_id" id="d_document_id" type="text">
 										</div>
 										<button type="submit" id="delete_button">Delete</button>
