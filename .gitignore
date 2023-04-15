@@ -1,5 +1,6 @@
 /target
 /thirtyfour_test/target
 /thirtyfour_test/*.jar
+/thirtyfour_test/chromedriver
 /firebase-service-account.json
 /*.pem
