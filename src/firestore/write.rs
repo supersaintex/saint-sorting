@@ -11,18 +11,14 @@ where
     T: Serialize,
 {
     //session check & unwrap user_id
-    let _user_id = match session.get::<Uuid>("user_id")? {
+    match session.get::<Uuid>("user_id")? {
         None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
-        Some(i) => i.to_string(),
+        Some(_) => (),
     };
 
     //unwrap email_address
     let email_address = match session.get::<String>("email_address")? {
-        None => {
-            return Err(FireStoreError::SessionGet(String::from(
-                "the email is not found.",
-            )))
-        }
+        None => return Err(FireStoreError::SessionGet(String::from("unauthorized"))),
         Some(i) => i,
     };
 

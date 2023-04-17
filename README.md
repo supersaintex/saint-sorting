@@ -2,7 +2,10 @@
 
 ## how to run on your local
 
-place firebase-service-account.json in /saint-sorting/
+### Prerequisites
+- place firebase-service-account.json in /saint-sorting/
+- place selenimum jar in /saint-sorting/
+- install and run redis server `$ redis-server`
 
 ### 1. execute in 2steps
 Terminal:
