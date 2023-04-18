@@ -60,21 +60,20 @@ PID=$$
 	done
 }&
 # kill application and selenium when the test ends.
-sleep 3
-while :
-do
-	cmd="ps aux | grep ' target/debug/saint-sorting' | grep -v grep | wc -l"
-	pn=$(eval $cmd)
-	cmd2="ps aux | grep ' target/debug/thirtyfour_test' | grep -v grep | wc -l"
-	pn2=$(eval $cmd2)
-	if [ $pn -eq 1 ] && [ $pn2 -eq 0 ]; then
-		echo "The test ends, and kill the application and selenium server..."
-		sleep 3
-		pid=`ps aux | grep ' target/debug/saint-sorting' | grep -v grep | awk '{print $2}'`
-		kill -9 $pid
-		pid2=`ps aux | grep ' selenium' | grep -v grep | awk '{print $2}'`
-		kill -9 $pid2
-		exit 0
-	fi
-	sleep 1
-done
+#sleep 3
+#while :
+#do
+#	cmd="ps aux | grep ' target/debug/saint-sorting' | grep -v grep | wc -l"
+#	pn=$(eval $cmd)
+#	cmd2="ps aux | grep ' target/debug/thirtyfour_test' | grep -v grep | wc -l"
+#	pn2=$(eval $cmd2)
+#	if [ $pn -eq 1 ] && [ $pn2 -eq 0 ]; then
+#		echo "The test ends, and kill the application and selenium server..."
+#		sleep 3
+#		pid=`ps aux | grep ' target/debug/saint-sorting' | grep -v grep | awk '{print $2}'`
+#		kill -9 $pid
+#		pid2=`ps aux | grep ' selenium' | grep -v grep | awk '{print $2}'`
+#		kill -9 $pid2
+#		exit 0
+#	fi
+#done
