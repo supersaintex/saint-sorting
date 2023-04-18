@@ -26,10 +26,10 @@ PID=$$
 #  done
 #)&
 #echo "hello"
-(
+{
 	cd thirtyfour_test
 	java -jar *.jar --ext example.jar:dir standalone
-)&
+}&
 {
 	sleep 1
 	while :
@@ -37,6 +37,9 @@ PID=$$
 		cmd3="ps aux | grep ' selenium' | grep -v grep | wc -l"
 		pn3=$(eval $cmd3)
 		if [ $pn3 -eq 1 ]; then
+			cd thirtyfour_test
+			cargo build
+			cd ..
 			./run_without_browser.zsh
 			exit 0
 		fi
@@ -44,7 +47,6 @@ PID=$$
 	done
 }&
 {
-	cd thirtyfour_test
 	sleep 1
 	while :
 	do
@@ -53,12 +55,13 @@ PID=$$
 		cmd3="ps aux | grep ' selenium' | grep -v grep | wc -l"
 		pn3=$(eval $cmd3)
 		if [ $pn -eq 1 ] && [ $pn3 -eq 1 ]; then
-			cargo run
+			./thirtyfour_test/target/debug/thirtyfour_test
 			exit 0
 		fi
 		sleep 1
 	done
 }&
+
 # kill application and selenium when the test ends.
 #sleep 3
 #while :
