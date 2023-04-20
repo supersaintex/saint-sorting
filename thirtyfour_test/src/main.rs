@@ -51,5 +51,7 @@ async fn main() -> color_eyre::Result<()> {
     let write_buttom = driver.find(By::Id("write_button")).await?;
     write_buttom.click().await?;
 
+    driver.quit().await?;
+
     Ok(())
 }
